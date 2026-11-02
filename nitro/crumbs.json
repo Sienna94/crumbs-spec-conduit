@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "specDir": "docs/specs",
+  "index": "index.md",
+  "overview": "overview.md",
+  "log": "log.md",
+  "lang": "en",
+  "headings": {},
+  "exclude": [
+    "templates/"
+  ],
+  "codeRoot": "../vendor/nitro",
+  "rawDir": "docs/raw"
+}

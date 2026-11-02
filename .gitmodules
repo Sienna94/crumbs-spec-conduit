@@ -1,0 +1,6 @@
+[submodule "vendor/nitro"]
+	path = vendor/nitro
+	url = https://github.com/realworld-apps/nitro-prisma-zod-realworld-example-app.git
+[submodule "vendor/django"]
+	path = vendor/django
+	url = https://github.com/c4ffein/realworld-django-ninja.git
