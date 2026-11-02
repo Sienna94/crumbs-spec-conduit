@@ -7,10 +7,6 @@ import sys
 EVAL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IMPLS = ["nitro", "django"]
 
-# Rows that test the email-format rule added to the suite on 2026-10-31 (realworld commit b8a37f1),
-# after both implementations' last commit (2026-05-05). Neither implementation has the rule.
-EXCLUDED = {"errors_auth-04", "errors_auth-10", "errors_auth-15"}
-
 
 def read_csv(name):
     with open(os.path.join(EVAL_DIR, name), newline="", encoding="utf-8") as f:
@@ -48,7 +44,7 @@ def main():
         grading[impl] = {r["id"]: r for r in rows}
         policies[impl] = read_csv(f"policies-{impl}.csv")
 
-    scored_ids = [i for i in behavior_ids if i not in EXCLUDED]
+    scored_ids = behavior_ids
 
     def suite_stats(impl):
         rows = [grading[impl][i] for i in scored_ids]
@@ -99,7 +95,7 @@ def main():
     out = []
     out.append("# Summary")
     out.append("")
-    out.append(f"## Suite rows (excluding {len(EXCLUDED)} rows)")
+    out.append("## Suite rows")
     out.append("")
     out.append(table("| | nitro | django |",
                      [[label, suite_cols["nitro"][k], suite_cols["django"][k]]
@@ -111,13 +107,10 @@ def main():
                      [[label, policy_cols["nitro"][k], policy_cols["django"][k]]
                       for k, label in enumerate(policy_labels)]))
     out.append("")
-    out.append("## Excluded rows")
+    out.append("## Rows only in the newer suite (not scored)")
     out.append("")
-    for i in sorted(EXCLUDED):
-        n = grading["nitro"][i]
-        d = grading["django"][i]
-        out.append(f"- `{i}`: nitro `{n['verdict']}`, {n['note']} "
-                   f"django `{d['verdict']}`, {d['note']}")
+    for r in read_csv("grading-newer-suite-extra.csv"):
+        out.append(f"- `{r['id']}` {r['impl']} `{r['verdict']}`, {r['note']}")
     out.append("")
     out.append("## Rows where the two implementations differ")
     out.append("")

@@ -4,3 +4,4 @@ django writer finished: 2026-11-02T12:29:25Z tokens=201997 tool_uses=49 duration
 graders (Sonnet 5.5) started: 2026-11-02 after commit e23326e
 nitro grader finished: tokens=171916 tool_uses=20 duration_ms=2968480
 django grader finished: tokens=242444 tool_uses=36 duration_ms=4355194 (ran the code in a venv with unpinned dependencies, jwtninja 1.1.0)
+ground truth switched to realworld 450bbc5 (the version both implementations pin); 130 verdicts carried over by identical request content, 3 newer-suite rows kept in eval/grading-newer-suite-extra.csv

@@ -1,6 +1,6 @@
 # Summary
 
-## Suite rows (excluding 3 rows)
+## Suite rows
 
 | | nitro | django |
 |---|---|---|
@@ -21,14 +21,17 @@
 | supported: yes | 50 | 85 |
 | supported: partly | 1 | 6 |
 | supported: no | 0 | 0 |
-| asserted by the suite (in_suite yes) | 31 | 52 |
-| questions asserted by the suite | 29 | 12 |
+| asserted by the suite (in_suite yes) | 31 | 50 |
+| questions asserted by the suite | 29 | 11 |
 
-## Excluded rows
+## Rows only in the newer suite (not scored)
 
-- `errors_auth-04`: nitro `wrong`, Docs say "does not check the email format" (so 201), contradicting expected 422 "is invalid"; code has no format check (server/schemas/user.schema.ts:5), so docs match code and the code itself fails this row. django `partial`, Docs say an invalid email gives 422 but never state the asserted message "is invalid" (and the code actually returns the pydantic text "value is not a valid email address: ...").
-- `errors_auth-10`: nitro `wrong`, Docs describe only blank checks and 401 for an unmatched email, never 422 "is invalid" for a malformed email; code has no format check (server/schemas/user.schema.ts:15, server/routes/api/users/login.post.ts:11-45, so it answers 401), so the code itself fails this row. django `missing`, No document mentions a malformed email at login (docs imply 401 credentials invalid for any non-matching email, and a probe of the code, apps/accounts/schemas.py:70-80 + api.py:48-50, returns 401, so this ground-truth row cannot be charged to the docs).
-- `errors_auth-15`: nitro `wrong`, Docs say any non-blank email is trimmed and stored (no format check), contradicting expected 422 "is invalid"; code has no format check (server/schemas/user.schema.ts:22), so the code itself fails this row. django `partial`, Invalid email gives 422 as stated, but the asserted message "is invalid" is not documented (code returns odd keys, not errors.email).
+- `errors_auth-04` nitro `wrong`, Docs say "does not check the email format" (so 201), contradicting expected 422 "is invalid"; code has no format check (server/schemas/user.schema.ts:5), so docs match code and the code itself fails this row.
+- `errors_auth-10` nitro `wrong`, Docs describe only blank checks and 401 for an unmatched email, never 422 "is invalid" for a malformed email; code has no format check (server/schemas/user.schema.ts:15, server/routes/api/users/login.post.ts:11-45, so it answers 401), so the code itself fails this row.
+- `errors_auth-15` nitro `wrong`, Docs say any non-blank email is trimmed and stored (no format check), contradicting expected 422 "is invalid"; code has no format check (server/schemas/user.schema.ts:22), so the code itself fails this row.
+- `errors_auth-04` django `partial`, Docs say an invalid email gives 422 but never state the asserted message "is invalid" (and the code actually returns the pydantic text "value is not a valid email address: ...").
+- `errors_auth-10` django `missing`, No document mentions a malformed email at login (docs imply 401 credentials invalid for any non-matching email, and a probe of the code, apps/accounts/schemas.py:70-80 + api.py:48-50, returns 401, so this ground-truth row cannot be charged to the docs).
+- `errors_auth-15` django `partial`, Invalid email gives 422 as stated, but the asserted message "is invalid" is not documented (code returns odd keys, not errors.email).
 
 ## Rows where the two implementations differ
 
@@ -41,12 +44,12 @@
 | errors_articles-05 | correct | partial |
 | errors_articles-06 | correct | partial |
 | errors_articles-07 | correct | partial |
-| errors_auth-12 | correct | partial |
-| errors_auth-13 | correct | partial |
+| errors_auth-10 | correct | partial |
+| errors_auth-11 | correct | partial |
+| errors_auth-14 | partial | correct |
+| errors_auth-15 | partial | correct |
 | errors_auth-17 | partial | correct |
-| errors_auth-18 | partial | correct |
-| errors_auth-20 | partial | correct |
-| errors_auth-23 | correct | partial |
+| errors_auth-20 | correct | partial |
 | errors_comments-01 | correct | partial |
 | errors_comments-02 | correct | partial |
 | errors_profiles-02 | correct | partial |

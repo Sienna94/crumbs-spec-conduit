@@ -65,26 +65,23 @@ errors_articles-18,correct,question,api/articles/article-read.md#article-not-fou
 errors_auth-01,correct,confirmed,api/users/registration.md#registration-request,"Blank username after trimming gives 422 ""can't be blank"" under username."
 errors_auth-02,correct,confirmed,api/users/registration.md#registration-request,"Blank email after trimming gives 422 ""can't be blank"" under email."
 errors_auth-03,correct,confirmed,api/users/registration.md#registration-request,"Blank password after trimming gives 422 ""can't be blank"" under password."
-errors_auth-04,wrong,confirmed,api/users/registration.md#registration-request,"Docs say ""does not check the email format"" (so 201), contradicting expected 422 ""is invalid""; code has no format check (server/schemas/user.schema.ts:5), so docs match code and the code itself fails this row."
-errors_auth-05,correct,confirmed,api/users/registration.md#registration-response,Registration responds 201.
-errors_auth-06,correct,confirmed,api/users/registration.md#duplicate-email-or-username,"Duplicate username gives 409 {""errors"":{""username"":[""has already been taken""]}}."
-errors_auth-07,correct,confirmed,api/users/registration.md#duplicate-email-or-username,"Duplicate email gives 409 {""errors"":{""email"":[""has already been taken""]}}."
-errors_auth-08,correct,confirmed,api/users/login.md#login-request,"Blank email gives 422 ""can't be blank"" under email."
-errors_auth-09,correct,confirmed,api/users/login.md#login-request,"Blank password gives 422 ""can't be blank"" under password."
-errors_auth-10,wrong,confirmed,api/users/login.md#credential-check,"Docs describe only blank checks and 401 for an unmatched email, never 422 ""is invalid"" for a malformed email; code has no format check (server/schemas/user.schema.ts:15, server/routes/api/users/login.post.ts:11-45, so it answers 401), so the code itself fails this row."
-errors_auth-11,correct,confirmed,api/users/login.md#login-response,"Wrong password gives 401 {""errors"":{""credentials"":[""invalid""]}}."
-errors_auth-12,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
-errors_auth-13,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
-errors_auth-14,correct,confirmed,api/users/current-user-update.md#email-and-username-changes,"Blank email after trimming gives 422 ""can't be blank""."
-errors_auth-15,wrong,confirmed,api/users/current-user-update.md#email-and-username-changes,"Docs say any non-blank email is trimmed and stored (no format check), contradicting expected 422 ""is invalid""; code has no format check (server/schemas/user.schema.ts:22), so the code itself fails this row."
-errors_auth-16,correct,confirmed,api/users/current-user-update.md#email-and-username-changes,Blank username after trimming gives 422.
-errors_auth-17,partial,confirmed,api/users/current-user-update.md#email-and-username-changes,Only blank strings are said to give 422; a null email is not mentioned (code: user.schema.ts:22 rejects it as a type error).
-errors_auth-18,partial,confirmed,api/users/current-user-update.md#email-and-username-changes,Only blank strings are said to give 422; a null username is not mentioned (code: user.schema.ts:23 rejects it as a type error).
-errors_auth-19,correct,confirmed,api/users/current-user-update.md#password-change,Empty password trims to under 8 characters and gives 422.
-errors_auth-20,partial,confirmed,api/users/current-user-update.md#password-change,Docs cover only strings shorter than 8 characters; a null password is not mentioned (code: user.schema.ts:25 rejects it as a type error).
-errors_auth-21,correct,confirmed,api/users/current-user-update.md#password-change,"A 7-character password gives 422 ""must be at least 8 characters long""."
-errors_auth-22,correct,confirmed,api/users/current-user-update.md#password-change,An 8-character password meets the minimum and is accepted with 200.
-errors_auth-23,correct,confirmed,api/users/current-user-update.md#password-change,"Only a minimum of 8 characters is stated and no maximum, so 64 characters is accepted."
+errors_auth-04,correct,confirmed,api/users/registration.md#registration-response,Registration responds 201.
+errors_auth-05,correct,confirmed,api/users/registration.md#duplicate-email-or-username,"Duplicate username gives 409 {""errors"":{""username"":[""has already been taken""]}}."
+errors_auth-06,correct,confirmed,api/users/registration.md#duplicate-email-or-username,"Duplicate email gives 409 {""errors"":{""email"":[""has already been taken""]}}."
+errors_auth-07,correct,confirmed,api/users/login.md#login-request,"Blank email gives 422 ""can't be blank"" under email."
+errors_auth-08,correct,confirmed,api/users/login.md#login-request,"Blank password gives 422 ""can't be blank"" under password."
+errors_auth-09,correct,confirmed,api/users/login.md#login-response,"Wrong password gives 401 {""errors"":{""credentials"":[""invalid""]}}."
+errors_auth-10,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
+errors_auth-11,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
+errors_auth-12,correct,confirmed,api/users/current-user-update.md#email-and-username-changes,"Blank email after trimming gives 422 ""can't be blank""."
+errors_auth-13,correct,confirmed,api/users/current-user-update.md#email-and-username-changes,Blank username after trimming gives 422.
+errors_auth-14,partial,confirmed,api/users/current-user-update.md#email-and-username-changes,Only blank strings are said to give 422; a null email is not mentioned (code: user.schema.ts:22 rejects it as a type error).
+errors_auth-15,partial,confirmed,api/users/current-user-update.md#email-and-username-changes,Only blank strings are said to give 422; a null username is not mentioned (code: user.schema.ts:23 rejects it as a type error).
+errors_auth-16,correct,confirmed,api/users/current-user-update.md#password-change,Empty password trims to under 8 characters and gives 422.
+errors_auth-17,partial,confirmed,api/users/current-user-update.md#password-change,Docs cover only strings shorter than 8 characters; a null password is not mentioned (code: user.schema.ts:25 rejects it as a type error).
+errors_auth-18,correct,confirmed,api/users/current-user-update.md#password-change,"A 7-character password gives 422 ""must be at least 8 characters long""."
+errors_auth-19,correct,confirmed,api/users/current-user-update.md#password-change,An 8-character password meets the minimum and is accepted with 200.
+errors_auth-20,correct,confirmed,api/users/current-user-update.md#password-change,"Only a minimum of 8 characters is stated and no maximum, so 64 characters is accepted."
 errors_authorization-01,correct,confirmed,api/users/registration.md#registration-response,Registration responds 201.
 errors_authorization-02,correct,confirmed,api/users/registration.md#registration-response,Registration responds 201.
 errors_authorization-03,correct,confirmed,api/articles/article-create.md#creation-response,Article creation responds 201.

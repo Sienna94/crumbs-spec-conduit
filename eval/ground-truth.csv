@@ -72,26 +72,23 @@ errors_articles-20,errors_articles.hurl,,cleanup,DELETE,/api/articles/{{slug2}},
 errors_auth-01,errors_auth.hurl,Register empty username,behavior,POST,/api/users,none,"{""user"":{""username"":"""",""email"":""ea_blank_{{uid}}@test.com"",""password"":""password123""}}",422,"jsonpath ""$.errors.username[0]"" == ""can't be blank"""
 errors_auth-02,errors_auth.hurl,Register empty email,behavior,POST,/api/users,none,"{""user"":{""username"":""ea_blank_{{uid}}"",""email"":"""",""password"":""password123""}}",422,"jsonpath ""$.errors.email[0]"" == ""can't be blank"""
 errors_auth-03,errors_auth.hurl,Register empty password,behavior,POST,/api/users,none,"{""user"":{""username"":""ea_blankp_{{uid}}"",""email"":""ea_blankp_{{uid}}@test.com"",""password"":""""}}",422,"jsonpath ""$.errors.password[0]"" == ""can't be blank"""
-errors_auth-04,errors_auth.hurl,Register malformed email,behavior,POST,/api/users,none,"{""user"":{""username"":""ea_badmail_{{uid}}"",""email"":""ea_badmail_{{uid}}_not_an_email"",""password"":""password123""}}",422,"jsonpath ""$.errors.email[0]"" == ""is invalid"""
-errors_auth-05,errors_auth.hurl,Register valid user for duplicate and login tests,behavior,POST,/api/users,none,"{""user"":{""username"":""ea_dup_{{uid}}"",""email"":""ea_dup_{{uid}}@test.com"",""password"":""password123""}}",201,
-errors_auth-06,errors_auth.hurl,Register duplicate username,behavior,POST,/api/users,none,"{""user"":{""username"":""ea_dup_{{uid}}"",""email"":""ea_dup2_{{uid}}@test.com"",""password"":""password123""}}",409,"jsonpath ""$.errors.username[0]"" == ""has already been taken"""
-errors_auth-07,errors_auth.hurl,Register duplicate email,behavior,POST,/api/users,none,"{""user"":{""username"":""ea_dup2_{{uid}}"",""email"":""ea_dup_{{uid}}@test.com"",""password"":""password123""}}",409,"jsonpath ""$.errors.email[0]"" == ""has already been taken"""
-errors_auth-08,errors_auth.hurl,Login empty email,behavior,POST,/api/users/login,none,"{""user"":{""email"":"""",""password"":""password123""}}",422,"jsonpath ""$.errors.email[0]"" == ""can't be blank"""
-errors_auth-09,errors_auth.hurl,Login empty password,behavior,POST,/api/users/login,none,"{""user"":{""email"":""ea_dup_{{uid}}@test.com"",""password"":""""}}",422,"jsonpath ""$.errors.password[0]"" == ""can't be blank"""
-errors_auth-10,errors_auth.hurl,Login malformed email,behavior,POST,/api/users/login,none,"{""user"":{""email"":""ea_dup_{{uid}}@"",""password"":""password123""}}",422,"jsonpath ""$.errors.email[0]"" == ""is invalid"""
-errors_auth-11,errors_auth.hurl,Login wrong password,behavior,POST,/api/users/login,none,"{""user"":{""email"":""ea_dup_{{uid}}@test.com"",""password"":""wrongpassword""}}",401,"jsonpath ""$.errors.credentials[0]"" == ""invalid"""
-errors_auth-12,errors_auth.hurl,GET /user no auth,behavior,GET,/api/user,none,,401,"jsonpath ""$.errors.token[0]"" == ""is missing"""
-errors_auth-13,errors_auth.hurl,PUT /user no auth,behavior,PUT,/api/user,none,"{""user"":{""bio"":""test""}}",401,"jsonpath ""$.errors.token[0]"" == ""is missing"""
-errors_auth-14,errors_auth.hurl,Update email to empty string - should reject,behavior,PUT,/api/user,token,"{""user"":{""email"":""""}}",422,
-errors_auth-15,errors_auth.hurl,Update email to malformed value - should reject,behavior,PUT,/api/user,token,"{""user"":{""email"":""not-an-email""}}",422,"jsonpath ""$.errors.email[0]"" == ""is invalid"""
-errors_auth-16,errors_auth.hurl,Update username to empty string - should reject,behavior,PUT,/api/user,token,"{""user"":{""username"":""""}}",422,
-errors_auth-17,errors_auth.hurl,Update email to null - should reject,behavior,PUT,/api/user,token,"{""user"":{""email"":null}}",422,
-errors_auth-18,errors_auth.hurl,Update username to null - should reject,behavior,PUT,/api/user,token,"{""user"":{""username"":null}}",422,
-errors_auth-19,errors_auth.hurl,Update password to empty string - should reject,behavior,PUT,/api/user,token,"{""user"":{""password"":""""}}",422,
-errors_auth-20,errors_auth.hurl,Update password to null - should reject,behavior,PUT,/api/user,token,"{""user"":{""password"":null}}",422,
-errors_auth-21,errors_auth.hurl,Update password shorter than 8 chars - should reject,behavior,PUT,/api/user,token,"{""user"":{""password"":""short7c""}}",422,
-errors_auth-22,errors_auth.hurl,Update password to 8 char simple word - should accept,behavior,PUT,/api/user,token,"{""user"":{""password"":""bonjour1""}}",200,
-errors_auth-23,errors_auth.hurl,Update password to 64 chars - should accept,behavior,PUT,/api/user,token,"{""user"":{""password"":""aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa""}}",200,
+errors_auth-04,errors_auth.hurl,Register valid user for duplicate and login tests,behavior,POST,/api/users,none,"{""user"":{""username"":""ea_dup_{{uid}}"",""email"":""ea_dup_{{uid}}@test.com"",""password"":""password123""}}",201,
+errors_auth-05,errors_auth.hurl,Register duplicate username,behavior,POST,/api/users,none,"{""user"":{""username"":""ea_dup_{{uid}}"",""email"":""ea_dup2_{{uid}}@test.com"",""password"":""password123""}}",409,"jsonpath ""$.errors.username[0]"" == ""has already been taken"""
+errors_auth-06,errors_auth.hurl,Register duplicate email,behavior,POST,/api/users,none,"{""user"":{""username"":""ea_dup2_{{uid}}"",""email"":""ea_dup_{{uid}}@test.com"",""password"":""password123""}}",409,"jsonpath ""$.errors.email[0]"" == ""has already been taken"""
+errors_auth-07,errors_auth.hurl,Login empty email,behavior,POST,/api/users/login,none,"{""user"":{""email"":"""",""password"":""password123""}}",422,"jsonpath ""$.errors.email[0]"" == ""can't be blank"""
+errors_auth-08,errors_auth.hurl,Login empty password,behavior,POST,/api/users/login,none,"{""user"":{""email"":""ea_dup_{{uid}}@test.com"",""password"":""""}}",422,"jsonpath ""$.errors.password[0]"" == ""can't be blank"""
+errors_auth-09,errors_auth.hurl,Login wrong password,behavior,POST,/api/users/login,none,"{""user"":{""email"":""ea_dup_{{uid}}@test.com"",""password"":""wrongpassword""}}",401,"jsonpath ""$.errors.credentials[0]"" == ""invalid"""
+errors_auth-10,errors_auth.hurl,GET /user no auth,behavior,GET,/api/user,none,,401,"jsonpath ""$.errors.token[0]"" == ""is missing"""
+errors_auth-11,errors_auth.hurl,PUT /user no auth,behavior,PUT,/api/user,none,"{""user"":{""bio"":""test""}}",401,"jsonpath ""$.errors.token[0]"" == ""is missing"""
+errors_auth-12,errors_auth.hurl,Update email to empty string - should reject,behavior,PUT,/api/user,token,"{""user"":{""email"":""""}}",422,
+errors_auth-13,errors_auth.hurl,Update username to empty string - should reject,behavior,PUT,/api/user,token,"{""user"":{""username"":""""}}",422,
+errors_auth-14,errors_auth.hurl,Update email to null - should reject,behavior,PUT,/api/user,token,"{""user"":{""email"":null}}",422,
+errors_auth-15,errors_auth.hurl,Update username to null - should reject,behavior,PUT,/api/user,token,"{""user"":{""username"":null}}",422,
+errors_auth-16,errors_auth.hurl,Update password to empty string - should reject,behavior,PUT,/api/user,token,"{""user"":{""password"":""""}}",422,
+errors_auth-17,errors_auth.hurl,Update password to null - should reject,behavior,PUT,/api/user,token,"{""user"":{""password"":null}}",422,
+errors_auth-18,errors_auth.hurl,Update password shorter than 8 chars - should reject,behavior,PUT,/api/user,token,"{""user"":{""password"":""short7c""}}",422,
+errors_auth-19,errors_auth.hurl,Update password to 8 char simple word - should accept,behavior,PUT,/api/user,token,"{""user"":{""password"":""bonjour1""}}",200,
+errors_auth-20,errors_auth.hurl,Update password to 64 chars - should accept,behavior,PUT,/api/user,token,"{""user"":{""password"":""aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa""}}",200,
 errors_authorization-01,errors_authorization.hurl,Register user A,behavior,POST,/api/users,none,"{""user"":{""username"":""authz_a_{{uid}}"",""email"":""authz_a_{{uid}}@test.com"",""password"":""password123""}}",201,
 errors_authorization-02,errors_authorization.hurl,Register user B,behavior,POST,/api/users,none,"{""user"":{""username"":""authz_b_{{uid}}"",""email"":""authz_b_{{uid}}@test.com"",""password"":""password123""}}",201,
 errors_authorization-03,errors_authorization.hurl,User A creates article,behavior,POST,/api/articles,token,"{""article"":{""title"":""Authz Article {{uid}}"",""description"":""test"",""body"":""test""}}",201,
