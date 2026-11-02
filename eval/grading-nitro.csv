@@ -1,0 +1,134 @@
+id,verdict,marked,doc,note
+articles-02,partial,confirmed,api/articles/article-create.md#creation-response,"201, all fields, favorited false, favoritesCount 0 and author are stated, but tagList[0]/[1] being in request order is not stated (docs only say ""stored order"")."
+articles-03,correct,confirmed,api/articles/article-list.md#list-response,"Documents 200, articles and articlesCount, body omitted, favorited/favoritesCount and author fields."
+articles-04,correct,confirmed,api/articles/article-list.md#filters,Author filter keeps only articles whose author username equals the value; list response shape and body omission also stated.
+articles-05,correct,confirmed,api/articles/article-list.md#list-response,Signed-in viewer on the list gets the same list response with body omitted and favorited computed per viewer.
+articles-06,correct,confirmed,api/articles/article-list.md#filters,Author filter with a token behaves as without; response shape stated.
+articles-07,correct,confirmed,api/articles/article-list.md#filters,Tag filter keeps articles carrying a tag with exactly that name; tagList is part of each listed article.
+articles-08,correct,confirmed,api/articles/article-list.md#list-response,Anonymous list returns 200 with articles and articlesCount.
+articles-09,correct,confirmed,api/articles/article-read.md#current-behavior,"Read returns 200 with every field, favorited false for anonymous viewer and author profile."
+articles-10,correct,confirmed,api/articles/article-update.md#field-changes,"Only body changes, absent fields and tags are kept, slug regenerated only when title present, updatedAt set to now on every update; createdAt as creation time per article-object."
+articles-11,correct,confirmed,api/articles/article-update.md#field-changes,Persisted update is visible on read: stored body and kept tags follow from the stored-value statements.
+articles-12,correct,confirmed,api/articles/article-update.md#field-changes,If tagList is absent the article keeps its tags.
+articles-13,correct,confirmed,api/articles/article-update.md#field-changes,An empty tagList removes every tag.
+articles-14,correct,confirmed,api/articles/article-update.md#field-changes,"Removal persists: replaced tag set is stored, read returns empty tagList."
+articles-15,partial,confirmed,api/articles/article-update.md#field-changes,Docs describe present and empty tagList but never say that tagList null is rejected with 422 (code: article.schema.ts:17 rejects null).
+articles-16,correct,confirmed,api/articles/article-delete.md#deletion-result,Author deletion responds 204 with an empty body.
+articles-17,correct,confirmed,api/articles/article-read.md#current-behavior,"Unknown slug on read gives 404 {""errors"":{""article"":[""not found""]}}."
+auth-01,correct,confirmed,api/users/registration.md#registration-response,"201 with email, username, token; bio and image null when absent stated under account creation."
+auth-02,correct,confirmed,api/users/login.md#login-response,"Login returns 200 with email, username, bio, image, token; null bio/image follows from account creation rule in registration doc."
+auth-03,correct,confirmed,api/users/current-user.md#current-user-response,Returns the account with a fresh token; null bio/image from the registration rule.
+auth-04,correct,confirmed,api/users/current-user-update.md#image-and-bio-changes,Non-empty bio is stored as sent and omitted fields keep their values.
+auth-05,correct,confirmed,api/users/current-user-update.md#image-and-bio-changes,Stored bio is returned on read.
+auth-06,correct,confirmed,api/users/current-user-update.md#image-and-bio-changes,Empty string bio clears the stored value and the field is null.
+auth-07,correct,confirmed,api/users/current-user-update.md#image-and-bio-changes,Cleared bio is persisted as null.
+auth-08,correct,confirmed,api/users/current-user-update.md#image-and-bio-changes,Non-empty bio is stored as sent.
+auth-09,correct,confirmed,api/users/current-user-update.md#image-and-bio-changes,Null bio clears the stored value and the field is null.
+auth-10,correct,confirmed,api/users/current-user-update.md#image-and-bio-changes,Cleared bio persists as null.
+auth-11,correct,confirmed,api/users/current-user-update.md#image-and-bio-changes,Non-empty bio is stored as sent; other fields kept.
+auth-12,correct,confirmed,api/users/current-user-update.md#image-and-bio-changes,Non-empty image is stored as sent.
+auth-13,correct,confirmed,api/users/current-user-update.md#image-and-bio-changes,Stored image is returned on read.
+auth-14,correct,confirmed,api/users/current-user-update.md#image-and-bio-changes,Empty string image clears the stored value to null.
+auth-15,correct,confirmed,api/users/current-user-update.md#image-and-bio-changes,Cleared image persists as null.
+auth-16,correct,confirmed,api/users/current-user-update.md#image-and-bio-changes,Non-empty image is stored as sent.
+auth-17,correct,confirmed,api/users/current-user-update.md#image-and-bio-changes,Null image clears the stored value to null.
+auth-18,correct,confirmed,api/users/current-user-update.md#image-and-bio-changes,Null image persists.
+auth-19,correct,confirmed,api/users/current-user-update.md#email-and-username-changes,Present email and username are trimmed and stored; absent bio/image keep their values.
+auth-20,correct,confirmed,api/users/current-user-update.md#email-and-username-changes,Updated username and email persist and are returned on read.
+comments-03,correct,confirmed,api/comments/comment-create.md#comment-response,"201 with comment object (id, createdAt, updatedAt, body, author) as defined in the comment list document."
+comments-04,correct,confirmed,api/comments/comment-list.md#comment-object,"List returns every comment on the article with id, body, timestamps and author profile."
+comments-05,correct,confirmed,api/comments/comment-list.md#comment-object,Anonymous viewer gets the same list with author following false.
+comments-06,correct,confirmed,api/comments/comment-delete.md#deletion-result,Author deletion responds 204 with an empty body.
+comments-07,correct,confirmed,api/comments/comment-list.md#comment-lookup,"List returns every comment, so an empty article yields an empty list."
+comments-08,correct,confirmed,api/comments/comment-create.md#comment-response,Comment creation responds 201.
+comments-09,correct,confirmed,api/comments/comment-create.md#comment-response,Comment creation responds 201.
+comments-10,correct,confirmed,api/comments/comment-list.md#comment-lookup,All comments on the article are returned in one response without pagination.
+comments-11,correct,confirmed,api/comments/comment-delete.md#deletion-result,Author deletion responds 204.
+comments-12,correct,confirmed,api/comments/comment-list.md#comment-lookup,Only the undeleted comment is returned.
+errors_articles-01,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
+errors_articles-02,correct,confirmed,api/articles/article-read.md#current-behavior,"Unknown slug on read gives 404 {""errors"":{""article"":[""not found""]}}."
+errors_articles-03,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
+errors_articles-04,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
+errors_articles-05,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
+errors_articles-06,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
+errors_articles-07,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
+errors_articles-09,correct,confirmed,api/articles/article-create.md#article-request,"Blank title after trimming gives 422 with ""can't be blank"" under title."
+errors_articles-10,correct,confirmed,api/articles/article-create.md#article-request,"Blank description after trimming gives 422 with ""can't be blank"" under description."
+errors_articles-11,correct,confirmed,api/articles/article-create.md#article-request,"Blank body after trimming gives 422 with ""can't be blank"" under body."
+errors_articles-12,correct,question,api/articles/article-create.md#article-slug-generation,"Duplicate titles are allowed because the slug gets a random 8-character suffix, but this is stated only in the flagged slug policy."
+errors_articles-13,correct,question,api/articles/article-create.md#article-slug-generation,Two articles with the same title get different slugs.
+errors_articles-14,correct,question,api/articles/article-read.md#article-not-found-response,"Unknown slug on update gives 404 {""errors"":{""article"":[""not found""]}} (message stated in the flagged policy)."
+errors_articles-15,correct,question,api/articles/article-read.md#article-not-found-response,"Unknown slug on favorite gives 404 {""errors"":{""article"":[""not found""]}} (message stated in the flagged policy)."
+errors_articles-16,correct,question,api/articles/article-read.md#article-not-found-response,"Unknown slug on unfavorite gives 404 {""errors"":{""article"":[""not found""]}} (message stated in the flagged policy)."
+errors_articles-17,correct,question,api/articles/article-read.md#article-not-found-response,"Unknown slug on update gives 404 {""errors"":{""article"":[""not found""]}} (message stated in the flagged policy)."
+errors_articles-18,correct,question,api/articles/article-read.md#article-not-found-response,"Unknown slug on delete gives 404 {""errors"":{""article"":[""not found""]}} (message stated in the flagged policy)."
+errors_auth-01,correct,confirmed,api/users/registration.md#registration-request,"Blank username after trimming gives 422 ""can't be blank"" under username."
+errors_auth-02,correct,confirmed,api/users/registration.md#registration-request,"Blank email after trimming gives 422 ""can't be blank"" under email."
+errors_auth-03,correct,confirmed,api/users/registration.md#registration-request,"Blank password after trimming gives 422 ""can't be blank"" under password."
+errors_auth-04,wrong,confirmed,api/users/registration.md#registration-request,"Docs say ""does not check the email format"" (so 201), contradicting expected 422 ""is invalid""; code has no format check (server/schemas/user.schema.ts:5), so docs match code and the code itself fails this row."
+errors_auth-05,correct,confirmed,api/users/registration.md#registration-response,Registration responds 201.
+errors_auth-06,correct,confirmed,api/users/registration.md#duplicate-email-or-username,"Duplicate username gives 409 {""errors"":{""username"":[""has already been taken""]}}."
+errors_auth-07,correct,confirmed,api/users/registration.md#duplicate-email-or-username,"Duplicate email gives 409 {""errors"":{""email"":[""has already been taken""]}}."
+errors_auth-08,correct,confirmed,api/users/login.md#login-request,"Blank email gives 422 ""can't be blank"" under email."
+errors_auth-09,correct,confirmed,api/users/login.md#login-request,"Blank password gives 422 ""can't be blank"" under password."
+errors_auth-10,wrong,confirmed,api/users/login.md#credential-check,"Docs describe only blank checks and 401 for an unmatched email, never 422 ""is invalid"" for a malformed email; code has no format check (server/schemas/user.schema.ts:15, server/routes/api/users/login.post.ts:11-45, so it answers 401), so the code itself fails this row."
+errors_auth-11,correct,confirmed,api/users/login.md#login-response,"Wrong password gives 401 {""errors"":{""credentials"":[""invalid""]}}."
+errors_auth-12,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
+errors_auth-13,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
+errors_auth-14,correct,confirmed,api/users/current-user-update.md#email-and-username-changes,"Blank email after trimming gives 422 ""can't be blank""."
+errors_auth-15,wrong,confirmed,api/users/current-user-update.md#email-and-username-changes,"Docs say any non-blank email is trimmed and stored (no format check), contradicting expected 422 ""is invalid""; code has no format check (server/schemas/user.schema.ts:22), so the code itself fails this row."
+errors_auth-16,correct,confirmed,api/users/current-user-update.md#email-and-username-changes,Blank username after trimming gives 422.
+errors_auth-17,partial,confirmed,api/users/current-user-update.md#email-and-username-changes,Only blank strings are said to give 422; a null email is not mentioned (code: user.schema.ts:22 rejects it as a type error).
+errors_auth-18,partial,confirmed,api/users/current-user-update.md#email-and-username-changes,Only blank strings are said to give 422; a null username is not mentioned (code: user.schema.ts:23 rejects it as a type error).
+errors_auth-19,correct,confirmed,api/users/current-user-update.md#password-change,Empty password trims to under 8 characters and gives 422.
+errors_auth-20,partial,confirmed,api/users/current-user-update.md#password-change,Docs cover only strings shorter than 8 characters; a null password is not mentioned (code: user.schema.ts:25 rejects it as a type error).
+errors_auth-21,correct,confirmed,api/users/current-user-update.md#password-change,"A 7-character password gives 422 ""must be at least 8 characters long""."
+errors_auth-22,correct,confirmed,api/users/current-user-update.md#password-change,An 8-character password meets the minimum and is accepted with 200.
+errors_auth-23,correct,confirmed,api/users/current-user-update.md#password-change,"Only a minimum of 8 characters is stated and no maximum, so 64 characters is accepted."
+errors_authorization-01,correct,confirmed,api/users/registration.md#registration-response,Registration responds 201.
+errors_authorization-02,correct,confirmed,api/users/registration.md#registration-response,Registration responds 201.
+errors_authorization-03,correct,confirmed,api/articles/article-create.md#creation-response,Article creation responds 201.
+errors_authorization-04,correct,confirmed,api/articles/article-delete.md#deletion-checks,"Non-author deletion gives 403 {""errors"":{""article"":[""forbidden""]}}."
+errors_authorization-05,correct,confirmed,api/articles/article-update.md#request-checks,"Non-author update gives 403 {""errors"":{""article"":[""forbidden""]}}."
+errors_authorization-06,correct,confirmed,api/comments/comment-create.md#comment-response,Comment creation responds 201.
+errors_authorization-07,correct,confirmed,api/comments/comment-delete.md#deletion-checks,"Non-author comment deletion gives 403 {""errors"":{""comment"":[""forbidden""]}}."
+errors_authorization-08,correct,confirmed,api/comments/comment-delete.md#deletion-checks,"Only the comment author can delete and the list returns every comment with body, so the survivor follows; no sentence says a rejected delete leaves it."
+errors_comments-01,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
+errors_comments-02,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
+errors_comments-05,correct,confirmed,api/comments/comment-create.md#comment-request,"Blank comment body gives 422 ""can't be blank"" under body."
+errors_comments-06,correct,question,api/articles/article-read.md#article-not-found-response,"Unknown article on comment creation gives 404 article ""not found"" (message stated in the flagged policy)."
+errors_comments-07,correct,question,api/articles/article-read.md#article-not-found-response,"Comment list on an unknown slug gives 404 article ""not found"" (message stated in the flagged policy)."
+errors_comments-08,correct,question,api/articles/article-read.md#article-not-found-response,"Unknown article on comment deletion gives 404 article ""not found"" (message stated in the flagged policy)."
+errors_comments-09,correct,confirmed,api/comments/comment-delete.md#deletion-checks,"A comment id not on the article gives 404 {""errors"":{""comment"":[""not found""]}}."
+errors_profiles-01,correct,confirmed,api/profiles/profile-lookup.md#current-behavior,"Unknown username gives 404 {""errors"":{""profile"":[""not found""]}}."
+errors_profiles-02,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
+errors_profiles-03,correct,confirmed,api/authentication-token.md#endpoints-that-require-authentication,"Required-auth endpoint without a token gives 401 {""errors"":{""token"":[""is missing""]}}."
+errors_profiles-05,correct,question,api/profiles/profile-lookup.md#profile-not-found-response,"Follow of an unknown user gives 404 profile ""not found"" (message stated in the flagged policy)."
+errors_profiles-06,correct,question,api/profiles/profile-lookup.md#profile-not-found-response,"Unfollow of an unknown user gives 404 profile ""not found"" (message stated in the flagged policy)."
+favorites-03,correct,confirmed,api/articles/article-favorite.md#favorite-response,"200 with favorited true and favoritesCount after the change; body, tags and author are part of the article."
+favorites-04,correct,confirmed,api/article-object.md#favorite-fields,Signed-in viewer who favorited sees favorited true and the count.
+favorites-05,correct,confirmed,api/articles/article-list.md#filters,favorited filter keeps articles the named user favorited; count and body omission stated.
+favorites-06,correct,confirmed,api/articles/article-list.md#filters,favorited filter with a token behaves the same.
+favorites-07,correct,confirmed,api/articles/article-favorite.md#favorite-response,200 with favorited false and favoritesCount after the unfavorite.
+favorites-08,correct,confirmed,api/article-object.md#favorite-fields,Viewer who has not favorited sees favorited false and the count.
+feed-01,correct,confirmed,api/users/registration.md#registration-response,Registration responds 201.
+feed-02,correct,confirmed,api/users/registration.md#registration-response,Registration responds 201.
+feed-03,correct,confirmed,api/articles/article-feed.md#feed-selection,A user following nobody gets an empty feed with articlesCount 0.
+feed-04,correct,confirmed,api/profiles/profile-follow.md#follow,Follow responds 200 with following true.
+feed-05,correct,confirmed,api/articles/article-create.md#creation-response,Article creation responds 201.
+feed-06,correct,confirmed,api/articles/article-create.md#creation-response,Article creation responds 201.
+feed-07,correct,confirmed,api/articles/article-feed.md#feed-response,"Feed holds followed authors' articles with count, body omitted and author profile."
+feed-08,correct,confirmed,api/articles/article-feed.md#feed-order-and-pagination,limit applies to the page while articlesCount stays the total; author following true stems from the profile-object flag rule.
+feed-09,correct,confirmed,api/articles/article-feed.md#feed-order-and-pagination,offset and limit apply to the page and articlesCount stays the total.
+pagination-02,correct,confirmed,api/articles/article-create.md#creation-response,Article creation responds 201.
+pagination-03,correct,confirmed,api/articles/article-create.md#creation-response,201 with title echoed and slug.
+pagination-04,correct,confirmed,api/articles/article-list.md#order-and-pagination,"Newest first, limit returns at most that many, and articlesCount is the matching total."
+pagination-05,correct,confirmed,api/articles/article-list.md#order-and-pagination,offset skips articles and the count stays the total.
+profiles-01,correct,confirmed,api/users/registration.md#registration-response,Registration responds 201.
+profiles-02,correct,confirmed,api/users/registration.md#registration-response,Registration responds 201.
+profiles-03,correct,confirmed,api/profile-object.md#profile-fields,"Profile has username, bio and image (null when unset) and following false for an anonymous viewer."
+profiles-04,correct,confirmed,api/profile-object.md#following-flag,Signed-in viewer who does not follow sees following false.
+profiles-05,correct,confirmed,api/profiles/profile-follow.md#follow,Follow responds 200 with a profile and following true.
+profiles-06,correct,confirmed,api/profiles/profile-follow.md#unfollow,Unfollow responds 200 with following false.
+profiles-07,correct,confirmed,api/profile-object.md#following-flag,After unfollow the viewer sees following false.
+tags-03,correct,confirmed,api/articles/tag-list.md#current-behavior,"Returns 200 with names of tags used by at least one article, most used first, at most 10."

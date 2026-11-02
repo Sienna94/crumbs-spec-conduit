@@ -1,0 +1,92 @@
+doc,policy,marked,supported,in_suite,note
+api/accounts/current-user.md,Current user read,confirmed,yes,yes,api.py:63-66 and schemas.py:87-107 return the user with bio/image null when empty and a fresh token (create_jwt_token).
+api/accounts/current-user.md,Current user partial update,confirmed,yes,yes,"api.py:69-82 loops over email/bio/image/username and only sets values that are not EMPTY, then returns a new token."
+api/accounts/current-user.md,Current user password change,confirmed,yes,no,"api.py:76-77 calls set_password when password is present and the output schema (schemas.py:141-146) has no password; GT rows errors_auth-22/23 only check status 200, never a login with the new password."
+api/accounts/current-user.md,Current user update body shape,confirmed,yes,no,"Probe confirms: missing user or non-object body gives 422 ""Field required"" on user, extra keys ignored, and {""user"": []} or {""user"":""x""} gives 200 (schemas.py:137-138, api.py:72-78)."
+api/accounts/current-user.md,Current user email validation,confirmed,yes,yes,"schemas.py:115 types email as EmailStr so an invalid address gives 422 (errors_auth-15 asserts 422, but the code returns odd keys instead of errors.email, which the policy does not claim)."
+api/accounts/current-user.md,Current user blank and null values,question,partly,yes,"schemas.py:115-126 gives ""can't be blank"" for username/password/null email and null bio/image become empty, but an empty-string email fails the EmailStr union first and returns keys like ""function-after[_validate(), str]"" instead of ""can't be blank""."
+api/accounts/current-user.md,Current user password minimum length,question,yes,yes,"schemas.py:128-134 rejects 1-7 characters with ""must be at least 8 characters long"" and cites NIST 800-63B in the comment at line 128."
+api/accounts/current-user.md,Current user update duplicate email or username,question,yes,no,api.py:78 saves without catching IntegrityError; probe renaming to a taken username gives an unhandled 500.
+api/accounts/login.md,Login required fields,confirmed,yes,no,"schemas.py:70-84 requires user.email and user.password and handler urls.py:33-44 returns ""Field required"" per missing field (probe confirmed)."
+api/accounts/login.md,Login identifier,confirmed,yes,yes,api.py:48 authenticates with email and models.py:41-43 sets USERNAME_FIELD to email.
+api/accounts/login.md,Login wrong password,confirmed,yes,yes,"api.py:49-50 returns 401 {""errors"":{""credentials"":[""invalid""]}}."
+api/accounts/login.md,Login response,confirmed,yes,yes,"api.py:52-60 returns username, email, bio/image null when empty and a new token with 200."
+api/accounts/login.md,Login rejection without a test,question,yes,yes,"schemas.py:75-80 raises ""can't be blank"" for empty fields (errors_auth-08/09) and api.py:49-50 gives the same 401 for an unknown email."
+api/accounts/profile-follow.md,Follow a profile,confirmed,yes,yes,api.py:99-102 adds the follower and returns the profile with following true.
+api/accounts/profile-follow.md,Unfollow a profile,confirmed,yes,yes,api.py:112-115 removes the follower and returns the profile with following false.
+api/accounts/profile-follow.md,Follow state conflict,confirmed,yes,no,"api.py:99-100 and 112-113 return 409 (probe body is the JSON literal null, which the Current behavior calls an empty body)."
+api/accounts/profile-follow.md,Self follow,confirmed,yes,no,"api.py:97-98 and 110-111 raise AuthorizationError, answered as 403 by urls.py:63-65 (probe: {""errors"":{""profile"":[""forbidden""]}})."
+api/accounts/profile-follow.md,Follow unknown profile,confirmed,yes,yes,"api.py:96 and 109 use get_or_404(User, ""profile"", ...) for both methods (errors_profiles-05/06)."
+api/accounts/profile-view.md,Profile representation,confirmed,yes,yes,"schemas.py:16-48 returns username, bio/image null when empty and following; articles and comments reuse ProfileSchema (articles/schemas.py:18)."
+api/accounts/profile-view.md,Profile following flag,confirmed,yes,yes,schemas.py:27-34 is true only for an authenticated viewer in followers; self follow is blocked (api.py:97) so own profile is false.
+api/accounts/profile-view.md,Profile view unknown username,question,yes,yes,"api.py:88 get_or_404(User, ""profile"", ...) gives 404 {""errors"":{""profile"":[""not found""]}} (errors_profiles-01)."
+api/accounts/registration.md,Registration required fields,confirmed,yes,yes,"schemas.py:51-67 requires user, email, password, username and raises ""can't be blank"" for empty strings (probe: missing fields give ""Field required"", errors_auth-01..03)."
+api/accounts/registration.md,Registration email format,question,yes,yes,"schemas.py:52 uses EmailStr (422), and tests.py:77-79 sends the body without the ""user"" wrapper as the policy says; the GT message ""is invalid"" is not produced by the code (pydantic text instead) but the policy claims only 422."
+api/accounts/registration.md,Registration duplicate email or username,confirmed,yes,yes,api.py:31-33 with clean_integrity_error (helpers/exceptions.py:22-31) returns 409 with the duplicate field.
+api/accounts/registration.md,Registration response,confirmed,yes,yes,"api.py:35-43 returns 201 with username, email, bio/image null and a token."
+api/accounts/registration.md,Registered account initial state,confirmed,yes,no,"models.py:7-15 creates a hashed-password user with AbstractUser defaults (active, not staff/superuser, no last_login) and bio blank/image null (models.py:36-37); GT checks only the response nulls."
+api/accounts/registration.md,Registration password strength,question,yes,no,api.py:30 passes the password straight to create_user (models.py:10-11) and AUTH_PASSWORD_VALIDATORS (settings.py:117-122) are never invoked; GT never registers with a weak password.
+api/accounts/registration.md,Registration username length,question,yes,no,models.py:35 limits username to 60 and EmailField defaults to 254 (models.py:34) while schemas.py:51-63 has no length check.
+api/articles/article-create.md,Article creation required fields,confirmed,yes,yes,"schemas.py:42-53 requires title and rejects an empty title with ""can't be blank"" (errors_articles-09)."
+api/articles/article-create.md,Article creation blank description or body,question,yes,yes,schemas.py:43-53 requires description/body and rejects empty strings (errors_articles-10/11).
+api/articles/article-create.md,Article tag list input,confirmed,yes,yes,"api.py:73-75, 87-88 get_or_create each tag and set them; schemas.py:46 default EMPTY means no tags and a non-list gives 422 (probe)."
+api/articles/article-create.md,Article unknown input fields,confirmed,yes,no,"Probe: creation and update with an extra ""foo"" key succeed because the pydantic schemas (schemas.py:42-71) ignore unknown keys."
+api/articles/article-create.md,Article slug from title,confirmed,yes,no,"models.py:51-55 uses slugify(title) on every save and api.py:122 includes slug in update_fields when the title changes (slugify also strips punctuation, which the policy does not mention)."
+api/articles/article-create.md,Article slug collision suffix,question,yes,yes,"models.py:53-54 appends ""-"" plus uuid4().hex[:8]; probe shows e.g. t1-28ceb60a (errors_articles-13)."
+api/articles/article-create.md,Article creation response,confirmed,yes,yes,"api.py:89-90 returns 201 with the annotated article (favorited false, count 0, author the viewer)."
+api/articles/article-create.md,Article creation conflict,question,yes,no,"api.py:82-86 maps IntegrityError to 409 with slug reported as title, and the model (models.py:51-55) makes an ordinary duplicate unlikely."
+api/articles/article-create.md,Article title length,question,yes,no,"models.py:38 max_length=150 with no schema limit (schemas.py:44); probe on SQLite gives a 500 from output validation, consistent with ""depends on the database""."
+api/articles/article-delete.md,Article deletion author only,confirmed,yes,yes,api.py:99-106 checks request.user against the author (403) and returns an empty 204.
+api/articles/article-delete.md,Article deletion cascade,question,yes,no,"comments/models.py:7 cascades comments, Django removes the favorites M2M rows, and Tag rows are separate (articles/models.py:14-18, 45); GT only checks the article is gone."
+api/articles/article-favorite.md,Favorite an article,confirmed,yes,yes,api.py:18-26 adds the favorite and returns the article re-read with updated favorited/count.
+api/articles/article-favorite.md,Unfavorite an article,confirmed,yes,yes,api.py:29-36 removes the favorite and returns the re-read article.
+api/articles/article-favorite.md,Favorite an already favorited article,question,partly,no,"api.py:21-22 returns 409 but the route declares only 200/404 (api.py:18), so ninja raises ConfigError and the probe returns 500, not the stated 409."
+api/articles/article-favorite.md,Unfavorite an article not favorited,question,yes,no,"api.py:32 get_or_404(article.favorites, ""article"", ...) gives 404 article (probe confirmed)."
+api/articles/article-list-and-feed.md,Article list filters,confirmed,yes,yes,"api.py:60-62 filters by tags__name, author__username and favorites__username (articles-04/07, favorites-05)."
+api/articles/article-list-and-feed.md,Article list order,confirmed,yes,yes,api.py:42 and 63 order by -created (pagination-04/05).
+api/articles/article-list-and-feed.md,Article list pagination,confirmed,yes,yes,"api.py:43 and 64 slice [offset:offset+limit] (feed-08/09, pagination-04/05)."
+api/articles/article-list-and-feed.md,Article list default page size,question,yes,no,"api.py:40 and 56 default limit=20, offset=0 with no bounds (probe: negative values give 500, limit=0 gives an empty list)."
+api/articles/article-list-and-feed.md,Article list item fields,confirmed,yes,yes,articles/schemas.py:38-39 excludes body for list items (articles-03 asserts body not exists).
+api/articles/article-list-and-feed.md,Article feed scope,confirmed,yes,yes,"api.py:39-47 requires TokenAuth and filters author__in followed authors (feed-03, feed-07)."
+api/articles/article-list-and-feed.md,Article feed total count,confirmed,yes,yes,api.py:45 uses queryset.count() before slicing (feed-08/09).
+api/articles/article-list-and-feed.md,Article list viewer identity,question,yes,no,"api.py:50-59 has no auth= so request.user is the session user; probe shows favorited false for a token-only request, while GT token rows assert only isBoolean."
+api/articles/article-read.md,Article representation fields,confirmed,yes,yes,"articles/schemas.py:11-35 defines slug, title, description, body, tagList, timestamps, favorited, favoritesCount, author, and list omits body (schemas.py:38-39)."
+api/articles/article-read.md,Article favorited flag,confirmed,yes,yes,models.py:21-30 annotates num_favorites and is_favorite (false for anonymous).
+api/articles/article-read.md,Article tag list order,question,yes,yes,schemas.py:35 returns sorted(t.name ...); articles-02 asserts tagList[0]/[1] though insertion order would also satisfy it.
+api/articles/article-read.md,Article lookup by unknown slug,question,yes,yes,"get_or_404(..., ""article"", ...) is used in every article and comment endpoint (articles/api.py:20,31,89,95,101,112; comments/api.py:30,47,61)."
+api/articles/article-update.md,Article partial update,confirmed,partly,yes,"api.py:115-124 updates only present fields, but Article.save (models.py:52-55) recomputes the slug in memory, so for a suffixed slug a body-only update returns a different slug than the stored one (probe: my-title-92c98014 returned as my-title-0416c912)."
+api/articles/article-update.md,Article update author only,confirmed,yes,yes,api.py:113-114 raises AuthorizationError (403) for non-authors and TokenAuth gives 401 without a token.
+api/articles/article-update.md,Article update tag replacement,question,yes,yes,api.py:116-126 replaces tags via article.tags.set and leaves them when tagList is absent; probe tagList [] gives an empty list (articles-13/14).
+api/articles/article-update.md,Article update blank and null values,question,yes,no,"schemas.py:66-71 rejects empty strings with ""can't be blank"" but accepts None; probe: null title or body gives an unhandled 500 from NOT NULL columns (models.py:38-40)."
+api/articles/tag-list.md,Tag list contents,confirmed,yes,yes,api.py:130-132 returns the names of all Tag rows (tags-03).
+api/articles/tag-list.md,Tag list unused tags and order,question,yes,no,"api.py:132 uses Tag.objects.all() (no ordering, no paging, no usage filter) and deleting an article keeps tags."
+api/comments/comment-create.md,Comment creation,confirmed,yes,yes,comments/api.py:43-56 creates the comment for the viewer and returns 201 with following false.
+api/comments/comment-create.md,Comment body validation,question,yes,yes,"comments/schemas.py:10-22 requires comment.body and raises ""can't be blank"" for empty (errors_comments-05); probe shows missing comment/body give 422."
+api/comments/comment-delete.md,Comment deletion permission,confirmed,yes,yes,"comments/api.py:63-66 allows comment author or article author, else AuthorizationError (403), and returns 204."
+api/comments/comment-delete.md,Comment deletion article match,question,yes,no,"comments/api.py:61-63 only checks that the article exists and uses comment.article.author, never comment.article == slug article."
+api/comments/comment-list.md,Comment representation,confirmed,yes,yes,"comments/schemas.py:25-35 gives id, body, createdAt, updatedAt and author profile."
+api/comments/comment-list.md,Comment list order,confirmed,yes,yes,"comments/api.py:31 orders by -created; an article without comments gives [] (comments-07), but no GT row asserts the newest-first order."
+api/comments/comment-list.md,Comment author following flag,confirmed,yes,no,comments/api.py:21-25 and 36-38 annotate author_following for the viewer; GT comment rows assert only author.username.
+api/comments/comment-list.md,Comment list paging,question,yes,no,comments/api.py:28-40 returns the whole queryset without limit/offset.
+api/transport-and-errors.md,Token header prefix,confirmed,yes,yes,"jwt_utils.py:53-54 accepts ""Token "" (every GT token row sends it)."
+api/transport-and-errors.md,Bearer token prefix,question,yes,no,"jwt_utils.py:55-56 accepts ""Bearer "" and other prefixes are treated as missing (lines 57-61); probe with Bearer succeeded."
+api/transport-and-errors.md,Protected endpoint without token,confirmed,yes,yes,jwt_utils.py:44-50 returns None so ninja answers 401 before the view runs (errors_articles-01 etc.).
+api/transport-and-errors.md,Optional authentication without token,confirmed,yes,yes,"jwt_utils.py:44-49 sets AnonymousUser for pass_even routes so favorited/following are false (articles-09, profiles-03)."
+api/transport-and-errors.md,Optional authentication with invalid token,question,yes,no,"jwt_utils.py:63-73 catches APIError under pass_even and falls back to AnonymousUser; probe: ""Token garbage"" on /api/profiles/a1 gives 200 following false."
+api/transport-and-errors.md,Token validation failure codes,question,partly,no,"jwt_utils.py:79-96 raises the five APIError codes, but config/urls.py:33-72 registers no handler for APIError and the probe with jwtninja 1.1.0 returns 500, not 401 with a code."
+api/transport-and-errors.md,Issued token format,confirmed,yes,yes,"api.py:34,51,65,79 call create_jwt_token and jwt_utils.py:121 returns a generate_jwt token (three parts); GT checks token isString/not empty."
+api/transport-and-errors.md,Token session and lifetime,question,partly,no,"IP is always 127.0.0.1 (jwt_utils.py:104-111, callers pass no request) and old sessions are kept, but settings.py:152-155 uses a JWT_NINJA dict that jwtninja 1.1.0 ignores (probe: exp is about 300 s, not 7 days)."
+api/transport-and-errors.md,Timestamp format,confirmed,yes,yes,"Probe shows ISO strings like 2026-11-02T13:29:25.104Z (UTC, fractional seconds, trailing Z); GT regexes check the ISO prefix only."
+api/transport-and-errors.md,API error response body,question,yes,yes,"config/urls.py:33-72 defines the 422/404/403/401 bodies exactly as stated and apps/accounts/tests.py:155-157 observes the library {""detail"": [...]} body when calling the router directly."
+api/transport-and-errors.md,Cross-origin access,question,yes,no,settings.py:28 sets CORS_ORIGIN_ALLOW_ALL = True.
+operations/admin-site.md,Admin site model registration,question,yes,no,articles/admin.py:4-10 registers every model from apps.get_models() and ignores AlreadyRegistered; accounts and comments admin files are empty.
+operations/admin-site.md,Superuser creation flags,question,yes,no,accounts/models.py:17-26 sets is_staff/is_superuser/is_active defaults and raises the two ValueError messages.
+operations/create-user-command.md,Create user command arguments,question,yes,no,createUser.py:19 and 26 require all three values and print the quoted message otherwise.
+operations/create-user-command.md,Create user command field names,question,yes,no,createUser.py:20-21 uses name= while the model field is username (migration 0002); probe raises FieldError at the lookup.
+operations/create-user-command.md,Create user command account role,question,partly,no,"create_user (models.py:7-15) makes an ordinary account and the messages say Admin (createUser.py:22,24), but the command never reaches creation because the name lookup raises FieldError (createUser.py:20)."
+operations/startup-configuration.md,Password hashing algorithm,confirmed,yes,no,"settings.py:124-128 overrides PASSWORD_HASHERS only for the fast hasher, so Django defaults to PBKDF2-SHA256 (accounts/tests.py:56-57)."
+operations/startup-configuration.md,Database selection by environment,question,yes,no,"settings.py:87-112 matches the table, including the SystemExit when neither DATABASE_URL nor DEBUG is set."
+operations/startup-configuration.md,Debug-only development options,question,yes,no,settings.py:89-90 and 125-128 raise RuntimeError without DEBUG and switch to MD5PasswordHasher with it.
+operations/startup-configuration.md,Allowed hosts,question,yes,no,"settings.py:27 uses [""*""] in debug, otherwise ALLOWED_HOSTS split on "";"" or an empty list."
+operations/startup-configuration.md,Secret key source,question,yes,no,"settings.py:20-24 hard-codes SECRET_KEY under a ""SECURITY WARNING: Unsuitable for production"" comment."
+operations/startup-configuration.md,Debug media serving,question,yes,no,"config/urls.py:85-86 adds static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) under DEBUG and settings.py defines neither value."

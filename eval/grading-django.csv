@@ -1,0 +1,134 @@
+id,verdict,marked,doc,note
+articles-02,correct,question,api/articles/article-read.md#article-tag-list-order,"Creation response fields, favorited false, count 0 and author=viewer are stated, and tagList order (alphabetical, here d_ before t_) is stated but sits in a policy marked [needs confirmation]."
+articles-03,correct,confirmed,api/articles/article-list-and-feed.md#article-list-item-fields,Global list returns articles and articlesCount with every article field except body.
+articles-04,correct,confirmed,api/articles/article-list-and-feed.md#article-list-filters,The author filter keeps only articles by that username and the item shape omits body.
+articles-05,correct,confirmed,api/articles/article-list-and-feed.md#article-list-item-fields,"List answers 200 with the same shape when only a token is sent (flags false, still booleans)."
+articles-06,correct,confirmed,api/articles/article-list-and-feed.md#article-list-filters,Author filter plus a token-only request is covered by the filter and viewer statements.
+articles-07,correct,confirmed,api/articles/article-list-and-feed.md#article-list-filters,The tag filter keeps only articles with that tag name.
+articles-08,correct,confirmed,api/articles/article-list-and-feed.md#global-list,GET /api/articles is public and answers 200 with articles and articlesCount.
+articles-09,correct,confirmed,api/articles/article-read.md#article-representation-fields,"Single-article read returns slug, title, description, body, tagList, timestamps, favorited false, count 0 and author."
+articles-10,correct,confirmed,api/articles/article-update.md#article-partial-update,"Only the given field changes, slug stays without a title change, tags are kept, updatedAt is refreshed and other fields (createdAt) are kept."
+articles-11,correct,confirmed,api/articles/article-read.md#article-representation-fields,Read after update shows the stored changed body and the two kept tags.
+articles-12,correct,question,api/articles/article-update.md#article-update-tag-replacement,"Absent tagList keeps the article tags, but the statement is repeated in a policy marked [needs confirmation]."
+articles-13,correct,question,api/articles/article-update.md#article-update-tag-replacement,"The policy says an empty tagList removes every tag, under a [needs confirmation] marker."
+articles-14,correct,confirmed,api/articles/article-read.md#article-representation,tagList is empty when the article has no tags.
+articles-15,partial,confirmed,api/articles/article-create.md#article-tag-list-input,"Only the creation documents say a non-list tagList gives 422; the update document is silent about null or invalid tagList (code answers 422 ""Input should be a valid list"")."
+articles-16,correct,confirmed,api/articles/article-delete.md#article-deletion-author-only,The author deleting gets 204 with an empty body.
+articles-17,correct,question,api/articles/article-read.md#article-lookup-by-unknown-slug,"Unknown slug gives 404 with resource ""article"" and body errors.article=[""not found""] (shared handler), but the lookup policy is marked [needs confirmation]."
+auth-01,correct,confirmed,api/accounts/registration.md#registration-response,"201 with username, email, bio null, image null and a newly issued token."
+auth-02,correct,confirmed,api/accounts/login.md#login-response,"200 with user fields, null bio and image, and a new token."
+auth-03,correct,confirmed,api/accounts/current-user.md#current-user-read,GET /api/user returns the user with null bio/image and a newly issued token.
+auth-04,correct,confirmed,api/accounts/current-user.md#current-user-partial-update,Only bio changes and other fields are kept.
+auth-05,correct,confirmed,api/accounts/current-user.md#current-user-read,Read returns the stored bio and null image.
+auth-06,correct,confirmed,api/accounts/current-user.md#current-user-partial-update,Empty bio is a present field that is not listed among rejected blanks and bio is written as null when empty (two plain statements combined).
+auth-07,correct,confirmed,api/accounts/current-user.md#current-user-read,Read writes empty bio as null.
+auth-08,correct,confirmed,api/accounts/current-user.md#current-user-partial-update,Setting a non-empty bio updates it.
+auth-09,correct,question,api/accounts/current-user.md#current-user-blank-and-null-values,"Null bio is stored as empty and shown as null, stated under a [needs confirmation] marker."
+auth-10,correct,question,api/accounts/current-user.md#current-user-blank-and-null-values,Reading after a null bio shows null; relies on the marked null-to-empty storage statement.
+auth-11,correct,confirmed,api/accounts/current-user.md#current-user-partial-update,Setting bio again returns all user fields with the new bio.
+auth-12,correct,confirmed,api/accounts/current-user.md#current-user-partial-update,Image is updated like any present field.
+auth-13,correct,confirmed,api/accounts/current-user.md#current-user-read,Read returns the stored image.
+auth-14,correct,confirmed,api/accounts/current-user.md#current-user-partial-update,Empty image is written as null when empty (not listed among rejected blanks).
+auth-15,correct,confirmed,api/accounts/current-user.md#current-user-read,Read writes empty image as null.
+auth-16,correct,confirmed,api/accounts/current-user.md#current-user-partial-update,Setting an image URL updates it.
+auth-17,correct,question,api/accounts/current-user.md#current-user-blank-and-null-values,"Null image is stored as empty and shown as null, under a [needs confirmation] marker."
+auth-18,correct,question,api/accounts/current-user.md#current-user-blank-and-null-values,Read after null image shows null; relies on the marked statement.
+auth-19,correct,confirmed,api/accounts/current-user.md#current-user-partial-update,Username and email change together and bio is kept.
+auth-20,correct,confirmed,api/accounts/current-user.md#current-user-read,Read returns the updated username and email with kept bio.
+comments-03,correct,confirmed,api/comments/comment-create.md#comment-creation,"201 with comment id, body, timestamps and the viewer as author."
+comments-04,correct,confirmed,api/comments/comment-list.md#comment-representation,"Comment list returns every comment with id, body, timestamps and author profile."
+comments-05,correct,confirmed,api/comments/comment-list.md#comment-representation,The list works without a token (optional-auth) with the same fields.
+comments-06,correct,confirmed,api/comments/comment-delete.md#comment-deletion-permission,Comment author deleting gets 204 with an empty body.
+comments-07,correct,confirmed,api/comments/comment-list.md#comment-list-order,An article without comments gives an empty list.
+comments-08,correct,confirmed,api/comments/comment-create.md#comment-creation,Comment creation answers 201.
+comments-09,correct,confirmed,api/comments/comment-create.md#comment-creation,Second comment creation answers 201.
+comments-10,correct,confirmed,api/comments/comment-list.md#comment-list-order,Both comments are listed in one response without paging.
+comments-11,correct,confirmed,api/comments/comment-delete.md#comment-deletion-permission,Author deletes a comment and gets 204.
+comments-12,correct,confirmed,api/comments/comment-list.md#comment-list-order,Remaining comment is listed after deletion.
+errors_articles-01,partial,question,api/transport-and-errors.md#api-error-response-body,"Docs state 401 for a protected endpoint without token and give errors.token=[""is missing""] only for an HTTP 401 reaching the handler while also reporting the library body {""detail"":""Unauthorized""}, so the asserted message is left unresolved (POST article)."
+errors_articles-02,correct,question,api/articles/article-read.md#article-lookup-by-unknown-slug,"404 with errors.article=[""not found""], though the lookup policy is marked [needs confirmation]."
+errors_articles-03,partial,question,api/transport-and-errors.md#api-error-response-body,"Docs state 401 for a protected endpoint without token and give errors.token=[""is missing""] only for an HTTP 401 reaching the handler while also reporting the library body {""detail"":""Unauthorized""}, so the asserted message is left unresolved (PUT article)."
+errors_articles-04,partial,question,api/transport-and-errors.md#api-error-response-body,"Docs state 401 for a protected endpoint without token and give errors.token=[""is missing""] only for an HTTP 401 reaching the handler while also reporting the library body {""detail"":""Unauthorized""}, so the asserted message is left unresolved (DELETE article)."
+errors_articles-05,partial,question,api/transport-and-errors.md#api-error-response-body,"Docs state 401 for a protected endpoint without token and give errors.token=[""is missing""] only for an HTTP 401 reaching the handler while also reporting the library body {""detail"":""Unauthorized""}, so the asserted message is left unresolved (feed)."
+errors_articles-06,partial,question,api/transport-and-errors.md#api-error-response-body,"Docs state 401 for a protected endpoint without token and give errors.token=[""is missing""] only for an HTTP 401 reaching the handler while also reporting the library body {""detail"":""Unauthorized""}, so the asserted message is left unresolved (POST favorite)."
+errors_articles-07,partial,question,api/transport-and-errors.md#api-error-response-body,"Docs state 401 for a protected endpoint without token and give errors.token=[""is missing""] only for an HTTP 401 reaching the handler while also reporting the library body {""detail"":""Unauthorized""}, so the asserted message is left unresolved (DELETE favorite)."
+errors_articles-09,correct,confirmed,api/articles/article-create.md#article-validation,"Empty title gives 422 ""can't be blank"" under the field name."
+errors_articles-10,correct,question,api/articles/article-create.md#article-creation-blank-description-or-body,"Empty description gives 422 ""can't be blank"", under a [needs confirmation] marker."
+errors_articles-11,correct,question,api/articles/article-create.md#article-creation-blank-description-or-body,"Empty body gives 422 ""can't be blank"", under a [needs confirmation] marker."
+errors_articles-12,correct,confirmed,api/articles/article-create.md#article-creation-response,Creating an article answers 201.
+errors_articles-13,correct,question,api/articles/article-create.md#article-slug-collision-suffix,Same title is allowed and gets a different slug with a random 8-hex suffix; the suffix policy carries a [needs confirmation] marker.
+errors_articles-14,correct,question,api/articles/article-read.md#article-lookup-by-unknown-slug,"PUT on an unknown slug gives 404 resource ""article""; lookup policy is marked."
+errors_articles-15,correct,question,api/articles/article-read.md#article-lookup-by-unknown-slug,"POST favorite on unknown slug gives 404 ""article"" via the shared lookup, marked policy."
+errors_articles-16,correct,question,api/articles/article-read.md#article-lookup-by-unknown-slug,"DELETE favorite on unknown slug gives 404 ""article"" via the shared lookup, marked policy."
+errors_articles-17,correct,question,api/articles/article-read.md#article-lookup-by-unknown-slug,"PUT on an unknown slug gives 404 resource ""article""; lookup policy is marked."
+errors_articles-18,correct,question,api/articles/article-read.md#article-lookup-by-unknown-slug,"DELETE article on unknown slug gives 404 ""article"" via the shared lookup, marked policy."
+errors_auth-01,correct,confirmed,api/accounts/registration.md#registration-required-fields,"Empty username gives 422 with ""can't be blank"" and no account."
+errors_auth-02,correct,confirmed,api/accounts/registration.md#registration-required-fields,"Empty email gives 422 with ""can't be blank"" and no account."
+errors_auth-03,correct,confirmed,api/accounts/registration.md#registration-required-fields,"Empty password gives 422 with ""can't be blank"" and no account."
+errors_auth-04,partial,question,api/accounts/registration.md#registration-email-format,"Docs say an invalid email gives 422 but never state the asserted message ""is invalid"" (and the code actually returns the pydantic text ""value is not a valid email address: ..."")."
+errors_auth-05,correct,confirmed,api/accounts/registration.md#registration-response,Registration answers 201.
+errors_auth-06,correct,confirmed,api/accounts/registration.md#registration-duplicate-email-or-username,"Taken username gives 409 with errors.username=[""has already been taken""]."
+errors_auth-07,correct,confirmed,api/accounts/registration.md#registration-duplicate-email-or-username,"Taken email gives 409 with errors.email=[""has already been taken""]."
+errors_auth-08,correct,question,api/accounts/login.md#login-rejection-without-a-test,"Empty login email gives 422 ""can't be blank"", under a [needs confirmation] marker."
+errors_auth-09,correct,question,api/accounts/login.md#login-rejection-without-a-test,"Empty login password gives 422 ""can't be blank"", under a [needs confirmation] marker."
+errors_auth-10,missing,na,,"No document mentions a malformed email at login (docs imply 401 credentials invalid for any non-matching email, and a probe of the code, apps/accounts/schemas.py:70-80 + api.py:48-50, returns 401, so this ground-truth row cannot be charged to the docs)."
+errors_auth-11,correct,confirmed,api/accounts/login.md#login-wrong-password,"Wrong password gives 401 with errors.credentials=[""invalid""]."
+errors_auth-12,partial,question,api/transport-and-errors.md#api-error-response-body,"401 is stated for protected endpoints but the asserted body errors.token[0]=""is missing"" is only conditional and contradicted by the reported library body {""detail"":""Unauthorized""}."
+errors_auth-13,partial,question,api/transport-and-errors.md#api-error-response-body,"401 is stated for protected endpoints but the asserted body errors.token[0]=""is missing"" is only conditional and contradicted by the reported library body {""detail"":""Unauthorized""}."
+errors_auth-14,correct,question,api/accounts/current-user.md#current-user-blank-and-null-values,"Empty email in an update gives 422 (asserted status), though the stated message ""can't be blank"" is not what the code returns (schemas.py:115 union error) and is not asserted."
+errors_auth-15,partial,confirmed,api/accounts/current-user.md#current-user-email-validation,"Invalid email gives 422 as stated, but the asserted message ""is invalid"" is not documented (code returns odd keys, not errors.email)."
+errors_auth-16,correct,question,api/accounts/current-user.md#current-user-blank-and-null-values,"Empty username in an update gives 422, under a [needs confirmation] marker."
+errors_auth-17,correct,question,api/accounts/current-user.md#current-user-blank-and-null-values,"Null email in an update gives 422, under a [needs confirmation] marker."
+errors_auth-18,correct,question,api/accounts/current-user.md#current-user-blank-and-null-values,"Null username in an update gives 422, under a [needs confirmation] marker."
+errors_auth-19,correct,question,api/accounts/current-user.md#current-user-blank-and-null-values,"Empty password in an update gives 422, under a [needs confirmation] marker."
+errors_auth-20,correct,question,api/accounts/current-user.md#current-user-blank-and-null-values,"Null password in an update gives 422, under a [needs confirmation] marker."
+errors_auth-21,correct,question,api/accounts/current-user.md#current-user-password-minimum-length,"A 7-character password gives 422 ""must be at least 8 characters long"", under a marker."
+errors_auth-22,correct,question,api/accounts/current-user.md#current-user-password-minimum-length,"An 8-character password is accepted (200) by the stated 1-7 rejection range and 8-character minimum, under a marker."
+errors_auth-23,partial,question,api/accounts/current-user.md#current-user-password-minimum-length,"Docs list only the minimum-length rejection and are silent on any maximum, so the 200 for a 64-character password is not stated."
+errors_authorization-01,correct,confirmed,api/accounts/registration.md#registration-response,Registration answers 201.
+errors_authorization-02,correct,confirmed,api/accounts/registration.md#registration-response,Registration answers 201.
+errors_authorization-03,correct,confirmed,api/articles/article-create.md#article-creation-response,Article creation answers 201.
+errors_authorization-04,correct,confirmed,api/articles/article-delete.md#article-deletion-author-only,"Non-author delete gives 403 and the handler body errors.article=[""forbidden""] (resource from path)."
+errors_authorization-05,correct,confirmed,api/articles/article-update.md#article-update-author-only,"Non-author update gives 403 with errors.article=[""forbidden""]."
+errors_authorization-06,correct,confirmed,api/comments/comment-create.md#comment-creation,Comment creation answers 201.
+errors_authorization-07,correct,confirmed,api/comments/comment-delete.md#comment-deletion-permission,"A user who is neither comment author nor article author gets 403 with errors.comment=[""forbidden""] (path contains /comments/)."
+errors_authorization-08,correct,confirmed,api/comments/comment-list.md#comment-list-order,Public list still holds the comment with its body.
+errors_comments-01,partial,question,api/transport-and-errors.md#api-error-response-body,"401 is stated but the asserted errors.token[0]=""is missing"" is conditional and contradicted by the reported library body {""detail"":""Unauthorized""}."
+errors_comments-02,partial,question,api/transport-and-errors.md#api-error-response-body,"401 is stated but the asserted errors.token[0]=""is missing"" is conditional and contradicted by the reported library body {""detail"":""Unauthorized""}."
+errors_comments-05,correct,question,api/comments/comment-create.md#comment-body-validation,"Empty comment body gives 422 ""can't be blank"", under a [needs confirmation] marker."
+errors_comments-06,correct,question,api/articles/article-read.md#article-lookup-by-unknown-slug,"Comment creation on unknown slug gives 404 ""article"", marked policy."
+errors_comments-07,correct,question,api/articles/article-read.md#article-lookup-by-unknown-slug,"Comment list on unknown slug gives 404 ""article"", marked policy."
+errors_comments-08,correct,question,api/comments/comment-delete.md#deletion-request,"Article lookup comes first so unknown slug gives 404 ""article"" (via the marked lookup policy)."
+errors_comments-09,correct,confirmed,api/comments/comment-delete.md#deletion-request,"Unknown comment id on an existing article gives 404 with resource ""comment""."
+errors_profiles-01,correct,question,api/accounts/profile-view.md#profile-view-unknown-username,"Unknown username gives 404 resource ""profile"", under a [needs confirmation] marker."
+errors_profiles-02,partial,question,api/transport-and-errors.md#api-error-response-body,"401 for follow/unfollow without token is stated, but the asserted body errors.token[0]=""is missing"" stays conditional and contradicted by the reported library body."
+errors_profiles-03,partial,question,api/transport-and-errors.md#api-error-response-body,"401 for follow/unfollow without token is stated, but the asserted body errors.token[0]=""is missing"" stays conditional and contradicted by the reported library body."
+errors_profiles-05,correct,confirmed,api/accounts/profile-follow.md#follow-request,"Unknown username on follow gives 404 with resource ""profile""."
+errors_profiles-06,correct,confirmed,api/accounts/profile-follow.md#follow-request,"Both endpoints answer 404 ""profile"" for an unknown username."
+favorites-03,correct,confirmed,api/articles/article-favorite.md#favorite-an-article,200 with favorited true and favoritesCount grown by 1 (0 to 1).
+favorites-04,correct,confirmed,api/articles/article-read.md#article-favorited-flag,Read with token shows favorited true and count 1.
+favorites-05,correct,confirmed,api/articles/article-list-and-feed.md#article-list-filters,"The favorited filter returns articles favorited by that username, each with favoritesCount of at least 1."
+favorites-06,correct,confirmed,api/articles/article-list-and-feed.md#article-list-filters,Same filter with a token still returns the matching articles.
+favorites-07,correct,confirmed,api/articles/article-favorite.md#unfavorite-an-article,200 with favorited false and count shrunk by 1.
+favorites-08,correct,confirmed,api/articles/article-read.md#article-favorited-flag,Read shows favorited false and count 0.
+feed-01,correct,confirmed,api/accounts/registration.md#registration-response,Registration answers 201.
+feed-02,correct,confirmed,api/accounts/registration.md#registration-response,Registration answers 201.
+feed-03,correct,confirmed,api/articles/article-list-and-feed.md#article-feed-scope,A viewer who follows nobody gets an empty feed with articlesCount 0.
+feed-04,correct,confirmed,api/accounts/profile-follow.md#follow-a-profile,Follow answers 200 with following true.
+feed-05,correct,confirmed,api/articles/article-create.md#article-creation-response,Article creation answers 201.
+feed-06,correct,confirmed,api/articles/article-create.md#article-creation-response,Article creation answers 201.
+feed-07,correct,confirmed,api/articles/article-list-and-feed.md#article-feed-scope,"Feed holds only followed authors articles, count 2, items without body."
+feed-08,correct,confirmed,api/articles/article-list-and-feed.md#article-feed-total-count,limit=1 returns one article while articlesCount stays 2; the author following flag is true for a followed author.
+feed-09,correct,confirmed,api/articles/article-list-and-feed.md#article-list-pagination,limit=1 offset=1 returns one article and articlesCount 2.
+pagination-02,correct,confirmed,api/articles/article-create.md#article-creation-response,Article creation answers 201.
+pagination-03,correct,confirmed,api/articles/article-create.md#article-creation-response,Creation answers 201 with the given title and a slug.
+pagination-04,correct,confirmed,api/articles/article-list-and-feed.md#article-list-order,Newest-first with limit=1 returns the second article and total 2.
+pagination-05,correct,confirmed,api/articles/article-list-and-feed.md#article-list-order,offset=1 returns the older article and total 2.
+profiles-01,correct,confirmed,api/accounts/registration.md#registration-response,Registration answers 201.
+profiles-02,correct,confirmed,api/accounts/registration.md#registration-response,Registration answers 201.
+profiles-03,correct,confirmed,api/accounts/profile-view.md#profile-representation,"Anonymous view shows username, null bio and image, following false."
+profiles-04,correct,confirmed,api/accounts/profile-view.md#profile-following-flag,Logged-in viewer who does not follow sees following false.
+profiles-05,correct,confirmed,api/accounts/profile-follow.md#follow-a-profile,Follow answers 200 with following true.
+profiles-06,correct,confirmed,api/accounts/profile-follow.md#unfollow-a-profile,Unfollow answers 200 with following false.
+profiles-07,correct,confirmed,api/accounts/profile-view.md#profile-following-flag,After unfollow following is false.
+tags-03,correct,confirmed,api/articles/tag-list.md#tag-list-contents,Tags endpoint lists the names of all stored tags.

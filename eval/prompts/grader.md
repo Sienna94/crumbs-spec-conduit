@@ -7,10 +7,11 @@ The writer model (Opus 5.5) did not grade its own output.
 You are grading spec documents that another model wrote from an implementation's code, against the official RealWorld API test suite. Be strict and literal. Report in English.
 
 Inputs (read-only):
-- Ground truth: /Users/mac/crumbs-spec-conduit/eval/ground-truth.csv. Grade only rows whose `kind` is `behavior`. Each row is one request from the official Hurl suite: method, path, auth, body, expected status and the asserted values.
+- Ground truth: /Users/mac/crumbs-spec-conduit/eval/ground-truth.csv. Grade only rows whose `kind` is `behavior` (133 rows). Each row is one request from the official Hurl suite: method, path, auth, body, expected status and the asserted values. The original Hurl files are in /Users/mac/crumbs-spec-conduit/vendor/realworld/specs/api/hurl/ if you need context for a row.
 - Spec documents under test: /Users/mac/crumbs-spec-conduit/<impl>/docs/specs/ (start at index.md).
 - The implementation's code: /Users/mac/crumbs-spec-conduit/vendor/<impl> (use it only to confirm a suspected error, see below).
 - The official spec for context: /Users/mac/crumbs-spec-conduit/vendor/realworld/specs/api/openapi.yml.
+Do not read anything under /Users/mac/crumbs-spec-conduit/<other>/ or vendor/<other>, and do not read other files in eval/ except ground-truth.csv.
 
 The implementation passes the full official suite, so every ground-truth row describes what the code really does.
 
@@ -22,7 +23,7 @@ Task A. Write /Users/mac/crumbs-spec-conduit/eval/grading-<impl>.csv with one ro
   - `wrong`: the documents state something that contradicts the expected status or an asserted value. Open the code to confirm the documents are wrong (not the ground truth) and cite file:line in `note`.
   - `missing`: no document describes this case.
 - `marked`: `confirmed` if the statement you relied on is a plain policy or behavior statement, `question` if it is the statement part of a policy that carries a `[needs confirmation]` marker, `na` for `missing`.
-- `doc`: the document path and heading anchor you relied on (for example `articles/article-list.md#feed-ordering`), empty for `missing`.
+- `doc`: the document path (relative to <impl>/docs/specs/) and heading anchor you relied on, empty for `missing`.
 - `note`: one sentence.
 
 Task B. Write /Users/mac/crumbs-spec-conduit/eval/policies-<impl>.csv with one row per `###` policy heading found under a "Policies" section in any document, columns:
@@ -31,7 +32,9 @@ Task B. Write /Users/mac/crumbs-spec-conduit/eval/policies-<impl>.csv with one r
 - `in_suite`: `yes` if any ground-truth behavior row asserts this rule, otherwise `no`.
 - `note`: one sentence.
 
-Rules: judge each row independently; do not give credit for something you inferred but the documents do not say; when in doubt between two verdicts, choose the lower one and say why in `note`. Do not modify any file other than the two CSVs.
+Rules: judge each row independently; do not give credit for something you inferred but the documents do not say; when in doubt between two verdicts, choose the lower one and say why in `note`. Use proper CSV quoting (Python csv module is fine; run python with -I). Do not modify any file other than the two CSVs. Do not commit.
 
 At the end, print counts: verdicts by value, `marked` by value among non-missing rows, policies by `supported` and by `in_suite`, and the five most important `wrong` or `partial` rows with one-line reasons.
 ```
+
+The Django grader also ran the code in a scratch virtualenv to confirm suspected errors; the Nitro grader only read the code.
