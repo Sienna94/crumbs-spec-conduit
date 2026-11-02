@@ -1,5 +1,7 @@
 # Grader prompt
 
+`<repo>` stands for the absolute path of the local clone of this repository; the prompts were sent with that path filled in.
+
 Model: Claude Sonnet 5.5 (`claude-sonnet-5-5`), one agent per implementation, run after both writers finished.
 The writer model (Opus 5.5) did not grade its own output.
 
@@ -7,15 +9,15 @@ The writer model (Opus 5.5) did not grade its own output.
 You are grading spec documents that another model wrote from an implementation's code, against the official RealWorld API test suite. Be strict and literal. Report in English.
 
 Inputs (read-only):
-- Ground truth: /Users/mac/crumbs-spec-conduit/eval/ground-truth.csv. Grade only rows whose `kind` is `behavior` (133 rows). Each row is one request from the official Hurl suite: method, path, auth, body, expected status and the asserted values. The original Hurl files are in /Users/mac/crumbs-spec-conduit/vendor/realworld/specs/api/hurl/ if you need context for a row.
-- Spec documents under test: /Users/mac/crumbs-spec-conduit/<impl>/docs/specs/ (start at index.md).
-- The implementation's code: /Users/mac/crumbs-spec-conduit/vendor/<impl> (use it only to confirm a suspected error, see below).
-- The official spec for context: /Users/mac/crumbs-spec-conduit/vendor/realworld/specs/api/openapi.yml.
-Do not read anything under /Users/mac/crumbs-spec-conduit/<other>/ or vendor/<other>, and do not read other files in eval/ except ground-truth.csv.
+- Ground truth: <repo>/eval/ground-truth.csv. Grade only rows whose `kind` is `behavior` (133 rows). Each row is one request from the official Hurl suite: method, path, auth, body, expected status and the asserted values. The original Hurl files are in <repo>/vendor/realworld/specs/api/hurl/ if you need context for a row.
+- Spec documents under test: <repo>/<impl>/docs/specs/ (start at index.md).
+- The implementation's code: <repo>/vendor/<impl> (use it only to confirm a suspected error, see below).
+- The official spec for context: <repo>/vendor/realworld/specs/api/openapi.yml.
+Do not read anything under <repo>/<other>/ or vendor/<other>, and do not read other files in eval/ except ground-truth.csv.
 
 The implementation passes the full official suite, so every ground-truth row describes what the code really does.
 
-Task A. Write /Users/mac/crumbs-spec-conduit/eval/grading-<impl>.csv with one row per behavior row of the ground truth and these columns:
+Task A. Write <repo>/eval/grading-<impl>.csv with one row per behavior row of the ground truth and these columns:
 - `id` (from the ground truth)
 - `verdict`, exactly one of:
   - `correct`: the documents state the behavior that leads to this status and every essential asserted value (error field and message text, counts, ordering, presence or absence of a field, values derived from the request). Plain type checks such as isString or isInteger need not be stated, unless the documents contradict them.
@@ -26,7 +28,7 @@ Task A. Write /Users/mac/crumbs-spec-conduit/eval/grading-<impl>.csv with one ro
 - `doc`: the document path (relative to <impl>/docs/specs/) and heading anchor you relied on, empty for `missing`.
 - `note`: one sentence.
 
-Task B. Write /Users/mac/crumbs-spec-conduit/eval/policies-<impl>.csv with one row per `###` policy heading found under a "Policies" section in any document, columns:
+Task B. Write <repo>/eval/policies-<impl>.csv with one row per `###` policy heading found under a "Policies" section in any document, columns:
 - `doc`, `policy` (heading text), `marked` (`confirmed` or `question`)
 - `supported`: `yes` if the code supports the statement as written, `partly` if part of it is wrong or overstated, `no` if the code does not do this (an invented policy). Open the code for every row and cite file:line in `note`.
 - `in_suite`: `yes` if any ground-truth behavior row asserts this rule, otherwise `no`.
