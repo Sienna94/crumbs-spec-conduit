@@ -4,3 +4,6 @@
 [submodule "vendor/django"]
 	path = vendor/django
 	url = https://github.com/c4ffein/realworld-django-ninja.git
+[submodule "vendor/realworld"]
+	path = vendor/realworld
+	url = https://github.com/realworld-apps/realworld.git
