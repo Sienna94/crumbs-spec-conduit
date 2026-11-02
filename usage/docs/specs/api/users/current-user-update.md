@@ -14,6 +14,7 @@ This document owns PUT /api/user, which changes the signed-in user's email, user
 ### Email and username changes
 - If email or username is present, the server trims it and stores the trimmed value.
 - If email or username is present but blank after trimming, the server responds with status 422 and "can't be blank" under that field.
+- The server does not check the email format, as described in [Email format](registration.md#email-format).
 - If another account already uses the new email or username, the server responds with status 409 as described in [Account email and username uniqueness](registration.md#account-email-and-username-uniqueness).
 
 ### Password change

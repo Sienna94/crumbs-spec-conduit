@@ -42,8 +42,12 @@ A registration ends in a 422 validation error, a 409 conflict, or a 201 response
 
 ## Policies
 ### Registration required fields
-Registration requires email, username and password to be non-blank after trimming, and blank values are rejected with 422 "can't be blank". The server does not validate the email format, and it accepts a password of any non-blank length, while [Updated password minimum length](current-user-update.md#updated-password-minimum-length) requires 8 characters on update. No test covers these rules.
-[needs confirmation] Should registration validate the email format and apply the same 8-character password minimum as account update?
+Registration requires email, username and password to be non-blank after trimming, and blank values are rejected with 422 "can't be blank". The server accepts a password of any non-blank length, while [Updated password minimum length](current-user-update.md#updated-password-minimum-length) requires 8 characters on update. No test covers these rules.
+[needs confirmation] Should registration apply the same 8-character password minimum as account update?
+
+### Email format
+Registration, login and account update accept any email that is non-blank after trimming and apply no format check. Registration and account update store a value such as "not-an-email", and login with such a value ends in the unknown-email 401 response. The upstream API spec expects status 422 with {"errors": {"email": ["is invalid"]}} for a malformed email on registration, login and account update, and it declares the email fields of the login, registration, account and account update objects with the email format. No test in this repository covers an email format check.
+[needs confirmation] Should registration, login and account update reject a malformed email with status 422 and "is invalid" as the upstream API spec expects, and which addresses count as valid?
 
 ### Account email and username uniqueness
 Every account has a unique email and a unique username. Registration and account update reject a value that another account already uses with status 409 and "has already been taken" under the conflicting field. The server compares values exactly as stored after trimming and does not lowercase them, so values that differ only in letter case count as different. No test covers this endpoint mapping.
@@ -69,9 +73,11 @@ Registration, current user read and current user update responses include the us
 - `server/utils/prisma-errors.test.ts` — tests the 409 conversion with the email and username messages
 - `prisma/schema.prisma` — unique email and username and optional image and bio
 - `prisma/migrations/20241009081140_init/migration.sql` — initial user table with a default image and a demo column
+- `../docs/raw/realworld-b8a37f1-validate-email-format.diff` — upstream API spec change: hurl cases that expect 422 "is invalid" for a malformed email on registration, login and account update, and the email format on the OpenAPI user objects
 
 ## Open questions
-- [needs confirmation] [Registration required fields](#registration-required-fields) — Should registration validate the email format and apply the same 8-character password minimum as account update?
+- [needs confirmation] [Registration required fields](#registration-required-fields) — Should registration apply the same 8-character password minimum as account update?
+- [needs confirmation] [Email format](#email-format) — Should registration, login and account update reject a malformed email with status 422 and "is invalid" as the upstream API spec expects, and which addresses count as valid?
 - [needs confirmation] [Account email and username uniqueness](#account-email-and-username-uniqueness) — Should email and username uniqueness ignore letter case?
 - [needs confirmation] [Password trimming and hashing](#password-trimming-and-hashing) — Is removing surrounding whitespace from passwords intended, and what is the basis of the default bcrypt cost of 10?
 - [needs confirmation] [Optional profile fields at registration](#optional-profile-fields-at-registration) — Should a new account without an image get a default image, and which is right for the user table, the initial migration or the current schema?

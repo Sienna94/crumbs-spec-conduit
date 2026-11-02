@@ -1,0 +1,105 @@
+commit b8a37f107cdb636f213591aecbae0337f4d777f4
+Author: c4ffein
+Date: 2026-10-31 23:53:37 +0100
+
+    spec: validate email format
+
+
+diff --git a/specs/api/hurl/errors_auth.hurl b/specs/api/hurl/errors_auth.hurl
+index e26558a..0370152 100644
+--- a/specs/api/hurl/errors_auth.hurl
++++ b/specs/api/hurl/errors_auth.hurl
+@@ -37,6 +37,19 @@ HTTP 422
+ [Asserts]
+ jsonpath "$.errors.password[0]" == "can't be blank"
+ 
++# Register malformed email
++POST {{host}}/api/users
++{
++  "user": {
++    "username": "ea_badmail_{{uid}}",
++    "email": "ea_badmail_{{uid}}_not_an_email",
++    "password": "password123"
++  }
++}
++HTTP 422
++[Asserts]
++jsonpath "$.errors.email[0]" == "is invalid"
++
+ # Register valid user for duplicate and login tests
+ POST {{host}}/api/users
+ {
+@@ -100,6 +113,18 @@ HTTP 422
+ [Asserts]
+ jsonpath "$.errors.password[0]" == "can't be blank"
+ 
++# Login malformed email
++POST {{host}}/api/users/login
++{
++  "user": {
++    "email": "ea_dup_{{uid}}@",
++    "password": "password123"
++  }
++}
++HTTP 422
++[Asserts]
++jsonpath "$.errors.email[0]" == "is invalid"
++
+ # Login wrong password
+ POST {{host}}/api/users/login
+ {
+@@ -139,6 +164,18 @@ Authorization: Token {{token}}
+ }
+ HTTP 422
+ 
++# Update email to malformed value - should reject
++PUT {{host}}/api/user
++Authorization: Token {{token}}
++{
++  "user": {
++    "email": "not-an-email"
++  }
++}
++HTTP 422
++[Asserts]
++jsonpath "$.errors.email[0]" == "is invalid"
++
+ # Update username to empty string - should reject
+ PUT {{host}}/api/user
+ Authorization: Token {{token}}
+diff --git a/specs/api/openapi.yml b/specs/api/openapi.yml
+index 820a0f9..22886bb 100644
+--- a/specs/api/openapi.yml
++++ b/specs/api/openapi.yml
+@@ -461,6 +461,7 @@ components:
+       properties:
+         email:
+           type: string
++          format: email
+         password:
+           type: string
+           format: password
+@@ -475,6 +476,7 @@ components:
+           type: string
+         email:
+           type: string
++          format: email
+         password:
+           type: string
+           format: password
+@@ -489,6 +491,7 @@ components:
+       properties:
+         email:
+           type: string
++          format: email
+         token:
+           type: string
+         username:
+@@ -506,6 +509,7 @@ components:
+       properties:
+         email:
+           type: string
++          format: email
+         password:
+           type: string
+         username:

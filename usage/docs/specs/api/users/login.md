@@ -8,6 +8,7 @@ This document owns POST /api/users/login, which signs an existing user in with e
 ### Login request
 - The client sends {"user": {"email", "password"}}.
 - If email or password is blank after trimming, the server responds with status 422 and "can't be blank" under that field.
+- The server does not check the email format, as described in [Email format](registration.md#email-format).
 - The server trims the password before comparing it, following [Password trimming and hashing](registration.md#password-trimming-and-hashing).
 
 ### Credential check
