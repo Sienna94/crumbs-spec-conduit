@@ -1,0 +1,26 @@
+name: Test Hurl
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: Set up Bun
+      uses: oven-sh/setup-bun@v2
+    - name: Install Hurl
+      run: |
+        curl -sSL https://github.com/Orange-OpenSource/hurl/releases/download/8.0.1/hurl-8.0.1-x86_64-unknown-linux-gnu.tar.gz | tar xz
+        echo "$PWD/hurl-8.0.1-x86_64-unknown-linux-gnu/bin" >> "$GITHUB_PATH"
+    - name: Setup
+      run: make setup
+    - name: Run Tests
+      run: make test-with-hurl

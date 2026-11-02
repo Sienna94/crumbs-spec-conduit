@@ -1,0 +1,9 @@
+# Spec log
+
+A chronological record of what was done to the documents. The newest entry comes last.
+Entry heading: `## [YYYY-MM-DD] kind | title`; kind is one of ingest, query, lint, drift, change, decision.
+
+## [2026-11-02] change | crumbs-spec initialized
+
+## [2026-11-02] change | The API under /api is documented from code and tests, covering transport, authentication, users, profiles, articles and comments
+Result: 21 draft detail documents for api, 45 open questions. Reason: first documented from code and tests. Document: [Unique conflict field selection](api/http-transport.md#unique-conflict-field-selection)
