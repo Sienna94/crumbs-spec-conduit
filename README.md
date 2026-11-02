@@ -42,7 +42,6 @@ We ran the crumbs-writer skill (crumbs-spec 0.2.0) on two backends of the [RealW
 
 **What the writers raised that no suite row tests** (each written as a question):
 - Nitro: the email format is not checked at registration, login or update. A newer version of the suite tests it (`b8a37f1`), so Nitro would fail that version.
-- Nitro: the favorite and unfavorite responses spread the whole article record, including the full user rows of everyone who favorited it (email and password hash) — `server/routes/api/articles/[slug]/favorite/index.post.ts`.
 - Nitro: the initial migration and `prisma/schema.prisma` disagree (default image, a `demo` column).
 - Django: the article list ignores the token and reads the session user, so `favorited` and `following` are false for token clients.
 - Django: the `createUser` management command looks users up by a field a migration renamed.
