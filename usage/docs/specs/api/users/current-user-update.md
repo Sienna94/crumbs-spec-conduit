@@ -14,7 +14,7 @@ This document owns PUT /api/user, which changes the signed-in user's email, user
 ### Email and username changes
 - If email or username is present, the server trims it and stores the trimmed value.
 - If email or username is present but blank after trimming, the server responds with status 422 and "can't be blank" under that field.
-- The server does not check the email format, as described in [Email format](registration.md#email-format).
+- If email is present and the trimmed value is not a valid address, the server responds with status 422 and {"errors": {"email": ["is invalid"]}}, as described in [Email format](registration.md#email-format).
 - If another account already uses the new email or username, the server responds with status 409 as described in [Account email and username uniqueness](registration.md#account-email-and-username-uniqueness).
 
 ### Password change
@@ -61,7 +61,7 @@ Changing the password does not invalidate tokens issued earlier; every earlier t
 
 ## Evidence
 - `server/routes/api/user/index.put.ts` — validates the update, applies only the present fields, hashes a new password, maps duplicates to 409 and returns a fresh token
-- `server/schemas/user.schema.ts` — update fields, the 8-character password minimum and the conversion of empty image and bio to null
+- `server/schemas/user.schema.ts` — update fields, the email format rule, the 8-character password minimum and the conversion of empty image and bio to null
 - `server/utils/hash-password.ts` — hashes the new password
 - `server/utils/prisma-errors.ts` — converts a duplicate email or username into 409
 

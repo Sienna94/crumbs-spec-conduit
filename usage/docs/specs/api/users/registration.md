@@ -9,7 +9,8 @@ This document owns POST /api/users, which creates an account and signs the new u
 - The client sends {"user": {"email", "username", "password", "image", "bio"}}; image and bio are optional.
 - The server trims email, username and password and stores the trimmed values.
 - If email, username or password is blank after trimming, the server responds with status 422 and "can't be blank" under that field, following [Request body validation error mapping](../http-transport.md#request-body-validation-error-mapping).
-- The server does not check the email format and requires no minimum password length beyond a non-blank value.
+- If the trimmed email is not a valid address, the server responds with status 422 and {"errors": {"email": ["is invalid"]}}, as described in [Email format](#email-format).
+- The server requires no minimum password length beyond a non-blank value.
 
 ### Account creation
 - The server stores a bcrypt hash of the password, never the password itself.
@@ -32,13 +33,15 @@ The diagram shows the registration request from validation to the response.
 flowchart TD
     A[Client sends registration] --> B{Email, username and password non-blank}
     B -->|No| C[422 can't be blank]
-    B -->|Yes| D[Hash password and create account]
+    B -->|Yes| B2{Email is a valid address}
+    B2 -->|No| C2[422 is invalid]
+    B2 -->|Yes| D[Hash password and create account]
     D --> E{Email or username already used}
     E -->|Yes| F[409 has already been taken]
     E -->|No| G[201 user with token]
 ```
 
-A registration ends in a 422 validation error, a 409 conflict, or a 201 response that signs the user in.
+A registration ends in a 422 validation error (blank field or invalid email), a 409 conflict, or a 201 response that signs the user in.
 
 ## Policies
 ### Registration required fields
@@ -46,8 +49,11 @@ Registration requires email, username and password to be non-blank after trimmin
 [needs confirmation] Should registration apply the same 8-character password minimum as account update?
 
 ### Email format
-Registration, login and account update accept any email that is non-blank after trimming and apply no format check. Registration and account update store a value such as "not-an-email", and login with such a value ends in the unknown-email 401 response. The upstream API spec expects status 422 with {"errors": {"email": ["is invalid"]}} for a malformed email on registration, login and account update, and it declares the email fields of the login, registration, account and account update objects with the email format. No test in this repository covers an email format check.
-[needs confirmation] Should registration, login and account update reject a malformed email with status 422 and "is invalid" as the upstream API spec expects, and which addresses count as valid?
+Registration, login and account update require the email to be a valid address after trimming. An email that fails the check is rejected with status 422 and {"errors": {"email": ["is invalid"]}} before the server hashes a password, looks up an account or writes to the database. On account update, the check applies only when the request contains an email. All three endpoints use the same check. No test covers this rule.
+
+### Accepted email address forms
+The server accepts the addresses that the validation library's built-in email rule accepts, and the schema adds no length limit or domain restriction. The schema applies the blank check and the format check to the same email field, and the validation error mapping lists every failing message under one key, so no test or rule settles whether a blank email reports "can't be blank" alone or together with "is invalid".
+[needs confirmation] Which addresses should count as valid, and should a blank email report only "can't be blank"?
 
 ### Account email and username uniqueness
 Every account has a unique email and a unique username. Registration and account update reject a value that another account already uses with status 409 and "has already been taken" under the conflicting field. The server compares values exactly as stored after trimming and does not lowercase them, so values that differ only in letter case count as different. No test covers this endpoint mapping.
@@ -67,7 +73,7 @@ Registration, current user read and current user update responses include the us
 
 ## Evidence
 - `server/routes/api/users/index.post.ts` — validates the request, hashes the password, creates the account, returns 201 with a token and maps duplicates to 409
-- `server/schemas/user.schema.ts` — registration fields, trimming and the "can't be blank" rule
+- `server/schemas/user.schema.ts` — registration fields, trimming, the "can't be blank" rule and the email format rule
 - `server/utils/hash-password.ts` — bcrypt hashing with the configurable cost
 - `server/utils/prisma-errors.ts` — converts the duplicate email or username into 409
 - `server/utils/prisma-errors.test.ts` — tests the 409 conversion with the email and username messages
@@ -77,7 +83,7 @@ Registration, current user read and current user update responses include the us
 
 ## Open questions
 - [needs confirmation] [Registration required fields](#registration-required-fields) — Should registration apply the same 8-character password minimum as account update?
-- [needs confirmation] [Email format](#email-format) — Should registration, login and account update reject a malformed email with status 422 and "is invalid" as the upstream API spec expects, and which addresses count as valid?
+- [needs confirmation] [Accepted email address forms](#accepted-email-address-forms) — Which addresses should count as valid, and should a blank email report only "can't be blank"?
 - [needs confirmation] [Account email and username uniqueness](#account-email-and-username-uniqueness) — Should email and username uniqueness ignore letter case?
 - [needs confirmation] [Password trimming and hashing](#password-trimming-and-hashing) — Is removing surrounding whitespace from passwords intended, and what is the basis of the default bcrypt cost of 10?
 - [needs confirmation] [Optional profile fields at registration](#optional-profile-fields-at-registration) — Should a new account without an image get a default image, and which is right for the user table, the initial migration or the current schema?

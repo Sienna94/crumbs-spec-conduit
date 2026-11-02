@@ -13,3 +13,6 @@ Result: GET /api/tags keeps the most-used-first order, leaves the order of equal
 
 ## [2026-11-03] ingest | The upstream API spec expects 422 with is invalid for a malformed email on registration, login and account update, and the server checks no email format yet
 Result: the Email format question is open in the registration document; the documents still describe no format check. Reason: docs/raw/realworld-b8a37f1-validate-email-format.diff. Document: [Email format](api/users/registration.md#email-format)
+
+## [2026-11-03] change | A malformed email on registration, login and account update is rejected with 422 and is invalid
+Result: a malformed email on registration, login and account update gets status 422 with {"errors": {"email": ["is invalid"]}}; 3 api documents updated and 1 open question remains about accepted address forms. Reason: code change in server/schemas/user.schema.ts, reported by the user. Document: [Email format](api/users/registration.md#email-format)

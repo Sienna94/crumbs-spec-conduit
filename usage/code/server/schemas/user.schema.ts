@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const registerUserSchema = z.object({
     user: z.object({
-        email: z.string().trim().min(1, "can't be blank"),
+        email: z.string().trim().min(1, "can't be blank").email('is invalid'),
         username: z.string().trim().min(1, "can't be blank"),
         password: z.string().trim().min(1, "can't be blank"),
         image: z.string().optional(),
@@ -12,14 +12,14 @@ export const registerUserSchema = z.object({
 
 export const loginUserSchema = z.object({
     user: z.object({
-        email: z.string().trim().min(1, "can't be blank"),
+        email: z.string().trim().min(1, "can't be blank").email('is invalid'),
         password: z.string().trim().min(1, "can't be blank"),
     }),
 });
 
 export const updateUserSchema = z.object({
     user: z.object({
-        email: z.string().trim().min(1, "can't be blank").optional(),
+        email: z.string().trim().min(1, "can't be blank").email('is invalid').optional(),
         username: z.string().trim().min(1, "can't be blank").optional(),
         // NIST 800-63B section 5.1.1.2: memorized secrets must be at least 8 chars.
         password: z.string().trim().min(8, 'must be at least 8 characters long').optional(),

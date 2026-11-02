@@ -8,7 +8,7 @@ This document owns POST /api/users/login, which signs an existing user in with e
 ### Login request
 - The client sends {"user": {"email", "password"}}.
 - If email or password is blank after trimming, the server responds with status 422 and "can't be blank" under that field.
-- The server does not check the email format, as described in [Email format](registration.md#email-format).
+- If the trimmed email is not a valid address, the server responds with status 422 and {"errors": {"email": ["is invalid"]}} before it looks up any account, as described in [Email format](registration.md#email-format).
 - The server trims the password before comparing it, following [Password trimming and hashing](registration.md#password-trimming-and-hashing).
 
 ### Credential check
@@ -27,14 +27,16 @@ The diagram shows the login request from validation to the response.
 flowchart TD
     A[Client sends login] --> B{Email and password non-blank}
     B -->|No| C[422 can't be blank]
-    B -->|Yes| D{Account with email exists}
+    B -->|Yes| B2{Email is a valid address}
+    B2 -->|No| C2[422 is invalid]
+    B2 -->|Yes| D{Account with email exists}
     D -->|No| E[401 credentials invalid]
     D -->|Yes| F{Password matches}
     F -->|No| E
     F -->|Yes| G[200 user with token]
 ```
 
-An unknown email and a wrong password end in the same 401 response.
+A blank or malformed email ends in a 422 response, and an unknown email and a wrong password end in the same 401 response.
 
 ## Policies
 ### Login credential matching
@@ -43,7 +45,7 @@ Login finds the account by an exact match of the trimmed email and compares the 
 
 ## Evidence
 - `server/routes/api/users/login.post.ts` — validates the request, finds the account by email, compares the password and returns the user with a token or 401
-- `server/schemas/user.schema.ts` — login fields, trimming and the "can't be blank" rule
+- `server/schemas/user.schema.ts` — login fields, trimming, the "can't be blank" rule and the email format rule
 - `server/utils/generate-token.ts` — issues the token returned on success
 
 ## Open questions
